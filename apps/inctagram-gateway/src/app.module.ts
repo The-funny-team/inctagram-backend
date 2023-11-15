@@ -7,3 +7,5 @@ import { PrismaService } from './core';
   providers: [PrismaService],
 })
 export class AppModule {}
+
+console.log('db url:', process.env.DATABASE_URL);
