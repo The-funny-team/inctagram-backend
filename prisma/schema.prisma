@@ -12,7 +12,7 @@ model User {
   id           String   @id @default(uuid())
   name         String   @unique
   email        String   @unique
-  hashPassword String   @map("hash_password")
+  hashPassword String?   @map("hash_password")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
   isDeleted    Boolean  @default(false)
@@ -28,8 +28,8 @@ model UserRegistrationInfo {
   user User @relation(fields: [userId], references: [id])
   userId String @unique @map("user_id")
   isConfirmed Boolean @default(false) @map("is_confirmed")
-  confirmationCode String @map("confirmation_code")
-  expirationConfirmationCode DateTime @map("expiration_confirmation_code")
+  confirmationCode String? @map("confirmation_code")
+  expirationConfirmationCode DateTime? @map("expiration_confirmation_code")
   recoveryCode String? @map("recovery_code")
   expirationRecoveryCode DateTime? @map("expiration_recovery_code")
 
