@@ -52,14 +52,6 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
       userDto.username,
     );
 
-    if (this.isCorrectNotConfirmedUser(userByLogin, userDto)) {
-      await this.userService.updateConfirmationCode(
-        userByEmail.userRegistrationInfo.id,
-        userByEmail.email,
-      );
-      return Result.Ok(userByEmail);
-    }
-
     if (userByLogin) {
       return Result.Err(
         new BadRequestError(ERROR_USERNAME_IS_ALREADY_REGISTRED, 'username'),
