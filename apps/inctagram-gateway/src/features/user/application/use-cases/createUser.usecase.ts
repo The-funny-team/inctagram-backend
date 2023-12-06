@@ -64,6 +64,11 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     const userInfo = this.getUserInfo();
     const createdUser = await this.userRepo.create(userDto, userInfo);
 
+    this.userService.createUserInfoCreatedEvent(
+      createdUser.email,
+      userInfo.confirmationCode,
+    );
+
     return Result.Ok(createdUser);
   }
 
