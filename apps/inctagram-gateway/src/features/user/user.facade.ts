@@ -3,11 +3,12 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserDto, NewPasswordDto, UserPasswordRecoveryDto } from './dto';
 import { UserQueryRepository } from './db/user.query.repository';
 import { ResponseUserDto } from './responses';
-import { User } from '@prisma/client';
+import { Provider, User } from '@prisma/client';
 import { Result } from '../../core/result';
 import {
   ConfirmationRegistrationCommand,
   CreateUserCommand,
+  LinkProviderUserToExistingUserCommand,
   NewPasswordCommand,
 } from './application';
 import { ConfirmationCodeDto } from '../auth/dto';
@@ -15,13 +16,31 @@ import { CheckUserCredentialsCommand } from './application/use-cases/checkUserCr
 import { LoginDto } from '../auth/dto/login.dto';
 import { UserIdType } from './types/userId.type';
 import { UserPasswordRecoveryCommand } from './application/use-cases/userPasswordRecovery.usecase';
+import { UserRepository } from './db';
+import {
+  UpdateUserProviderByProviderIdData,
+  UpdateUserProviderByProviderIdParams,
+} from './types';
+import { ProviderUserResponse } from '../auth/response';
 
 @Injectable()
-export class UserFasade {
+export class UserFacade {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly userRepo: UserRepository,
     private readonly userQueryRepo: UserQueryRepository,
   ) {}
+
+  repository = {
+    findUserProviderByProviderId: (
+      providerUserId: string,
+      provider: Provider,
+    ) => this.findUserProviderByProviderId(providerUserId, provider),
+    updateUserProviderByProviderId: (
+      params: UpdateUserProviderByProviderIdParams,
+      data: UpdateUserProviderByProviderIdData,
+    ) => this.updateUserProviderByProviderId(params, data),
+  };
 
   useCases = {
     createUser: (userDto: CreateUserDto) => this.createUser(userDto),
@@ -31,7 +50,13 @@ export class UserFasade {
       this.checkUserCredentials(loginDto),
     passwordRecovery: (passwordRRecoveryDto: UserPasswordRecoveryDto) =>
       this.passwordRecovery(passwordRRecoveryDto),
-    newPassword: (dto: NewPasswordDto) => this.newPassword(dto),
+    newPassword: (dto: NewPasswordDto): Promise<Result<User>> =>
+      this.newPassword(dto),
+    linkProviderUserToExistingUser: (
+      provider: Provider,
+      userData: ProviderUserResponse,
+    ): Promise<Result<string>> =>
+      this.linkProviderUserToExistingUser(provider, userData),
   };
   queries = { getUserViewById: (id: string) => this.getUserViewById(id) };
 
@@ -65,7 +90,7 @@ export class UserFasade {
     );
   }
 
-  private async newPassword(dto: NewPasswordDto): Promise<Result> {
+  private async newPassword(dto: NewPasswordDto): Promise<Result<User>> {
     return this.commandBus.execute<NewPasswordCommand, Result>(
       new NewPasswordCommand(dto),
     );
@@ -73,5 +98,29 @@ export class UserFasade {
 
   private async getUserViewById(id: string): Promise<Result<ResponseUserDto>> {
     return this.userQueryRepo.getUserViewById(id);
+  }
+
+  private async findUserProviderByProviderId(
+    providerUserId: string,
+    provider: Provider,
+  ) {
+    return this.userRepo.findUserProviderByProviderId(providerUserId, provider);
+  }
+
+  private async updateUserProviderByProviderId(
+    params: UpdateUserProviderByProviderIdParams,
+    data: UpdateUserProviderByProviderIdData,
+  ) {
+    return this.userRepo.updateUserProviderByProviderId(params, data);
+  }
+
+  private async linkProviderUserToExistingUser(
+    provider: Provider,
+    userData: ProviderUserResponse,
+  ): Promise<Result<string>> {
+    return this.commandBus.execute<
+      LinkProviderUserToExistingUserCommand,
+      Result<string>
+    >(new LinkProviderUserToExistingUserCommand(provider, userData));
   }
 }

@@ -19,6 +19,7 @@ model User {
   posts        Post[]
   userRegistrationInfo UserRegistrationInfo?
   devices Device[]
+  providers UserProvider[]
 
   @@map("users")
 }
@@ -34,6 +35,24 @@ model UserRegistrationInfo {
   expirationRecoveryCode DateTime? @map("expiration_recovery_code")
 
   @@map("users_registration_info")
+}
+
+model UserProvider {
+  id String @id @default(uuid())
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique @map("user_id")
+  provider Provider
+  providerUserId String @map("provider_user_id")
+  name String?
+  email String?
+
+  @@unique([userId, provider])
+  @@map("user_providers")
+}
+
+enum Provider {
+  GOOGLE
+  GIT_HUB
 }
 
 model Post {

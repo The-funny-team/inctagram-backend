@@ -2,11 +2,13 @@ import { Response } from 'express';
 import {
   Body,
   Controller,
+  Get,
   Headers,
   HttpCode,
   HttpStatus,
   Ip,
   Post,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -15,12 +17,12 @@ import {
   NewPasswordDto,
   UserPasswordRecoveryDto,
 } from '../../user/dto';
-import { UserFasade } from '../../user/user.fasade';
-import { ConfirmationCodeDto } from '../dto';
+import { UserFacade } from '../../user/user.facade';
+import { ConfirmationCodeDto, GoogleLoginDto, LoginProviderDto } from '../dto';
 import {
   ApiBadRequestResponse,
+  ApiCreatedResponse,
   ApiNoContentResponse,
-  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -32,6 +34,7 @@ import { CurrentUserId } from '../../../core/decorators/currentUserId.decorator'
 import { UserIdType } from '../../user/types/userId.type';
 import { DeviceDto } from '../../device/dto/device.dto';
 import { ResponseAccessTokenDto } from '../../device/responses/responseAccessToken.dto';
+import { AuthService } from '../auth.service';
 
 const baseUrl = '/auth';
 
@@ -40,30 +43,33 @@ export const endpoints = {
   registrationConfirmation: () => `${baseUrl}/registration-confirmation`,
   passwordRecovery: () => `${baseUrl}/password-recovery`,
   newPassword: () => `${baseUrl}/new-password`,
+  googleLogin: () => `${baseUrl}/google`,
+  gitHubLogin: () => `${baseUrl}/github`,
 };
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly userFasade: UserFasade,
+    private readonly userFacade: UserFacade,
     private readonly deviceFacade: DeviceFacade,
+    private readonly authService: AuthService,
   ) {}
 
   @ApiOperation({
     summary: 'User registration',
   })
-  @ApiOkResponse({ type: ResponseUserDto })
+  @ApiCreatedResponse({ type: ResponseUserDto })
   @ApiBadRequestResponse({ type: BadRequestResponse })
   @Post('registration')
   async createUser(@Body() userDto: CreateUserDto): Promise<ResponseUserDto> {
-    const resultCreated = await this.userFasade.useCases.createUser(userDto);
+    const resultCreated = await this.userFacade.useCases.createUser(userDto);
 
     if (!resultCreated.isSuccess) {
       throw resultCreated.err;
     }
 
-    const resultView = await this.userFasade.queries.getUserViewById(
+    const resultView = await this.userFacade.queries.getUserViewById(
       resultCreated.value.id,
     );
     if (!resultView.isSuccess) {
@@ -81,7 +87,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmRegistration(@Body() confirmDto: ConfirmationCodeDto) {
     const confirmationResult =
-      await this.userFasade.useCases.confirmationRegistration(confirmDto);
+      await this.userFacade.useCases.confirmationRegistration(confirmDto);
     if (!confirmationResult.isSuccess) {
       throw confirmationResult.err;
     }
@@ -97,7 +103,7 @@ export class AuthController {
   async passwordRecovery(
     @Body() passwordRRecoveryDto: UserPasswordRecoveryDto,
   ) {
-    const recoveryResult = await this.userFasade.useCases.passwordRecovery(
+    const recoveryResult = await this.userFacade.useCases.passwordRecovery(
       passwordRRecoveryDto,
     );
     if (!recoveryResult.isSuccess) {
@@ -113,7 +119,7 @@ export class AuthController {
   @Post('new-password')
   @HttpCode(HttpStatus.NO_CONTENT)
   async newPassword(@Body() dto: NewPasswordDto) {
-    const updateResult = await this.userFasade.useCases.newPassword(dto);
+    const updateResult = await this.authService.newPassword(dto);
     if (!updateResult.isSuccess) {
       throw updateResult.err;
     }
@@ -140,4 +146,41 @@ export class AuthController {
 
     return new ResponseAccessTokenDto(accessToken);
   }
+
+  @Get('google')
+  async googleLogin(
+    @Query() { code }: GoogleLoginDto,
+    @Ip() ip: string,
+    @Headers('user-agent') title: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<ResponseAccessTokenDto> {
+    const providerDto: LoginProviderDto = {
+      code,
+      ip,
+      title,
+    };
+
+    const result = await this.authService.googleLogin(providerDto);
+
+    if (!result.isSuccess) {
+      throw result.err;
+    }
+
+    const { accessToken, refreshToken } = result.value;
+
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return new ResponseAccessTokenDto(accessToken);
+  }
+
+  // @Get('github')
+  // async gintHubLogin(
+  //   @Query() { code }: GitHubLoginDto,
+  //   @Ip() ip: string,
+  //   @Headers('user-agent') title: string,
+  //   @Res({ passthrough: true }) response: Response,
+  // ): Promise<ResponseAccessTokenDto> {}
 }
