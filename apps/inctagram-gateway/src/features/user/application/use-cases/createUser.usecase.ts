@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserConfig } from '../../config';
-import { UserRegistrationInfoRepository, UserRepository } from '../../db';
+import { UserRepository } from '../../db';
 import { CreateUserDto, CreateUserInfoDto } from '../../dto';
 import { UserService } from '../../user.service';
 import { validateOrRejectModel } from '../../../../core/config';
@@ -10,7 +10,7 @@ import {
   ERROR_EMAIL_IS_ALREADY_REGISTRED,
   ERROR_USERNAME_IS_ALREADY_REGISTRED,
 } from '../../user.constants';
-import { FoundUserByEmailOrUsername } from '../../types';
+import { CreatedUserWithRegistrationInfo } from '../../types';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export class CreateUserCommand {
@@ -23,11 +23,12 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     private readonly userConfig: UserConfig,
     private readonly userService: UserService,
     private readonly userRepo: UserRepository,
-    private readonly userRegistrationInfoRepo: UserRegistrationInfoRepository,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async execute({ userDto }: CreateUserCommand): Promise<any> {
+  async execute({
+    userDto,
+  }: CreateUserCommand): Promise<Result<CreatedUserWithRegistrationInfo>> {
     await validateOrRejectModel(userDto, CreateUserDto);
 
     const userByEmail = await this.userRepo.findByUsernameOrEmail(
@@ -59,30 +60,24 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
     }
 
     userDto.password = this.userService.generatePasswordHash(userDto.password);
-    const createdUser = await this.userRepo.create(userDto);
 
-    const userInfo = await this.createUserInfo(createdUser.id);
-    this.userService.createUserInfoCreatedEvent(
-      createdUser.email,
-      userInfo.confirmationCode,
-    );
+    const userInfo = this.getUserInfo();
+    const createdUser = await this.userRepo.create(userDto, userInfo);
 
     return Result.Ok(createdUser);
   }
 
-  private async createUserInfo(userId: string) {
+  private getUserInfo() {
     const confirmationCode = this.userService.generateConfirmationCode();
     const userInfo: CreateUserInfoDto = {
-      userId: userId,
       confirmationCode: confirmationCode.code,
       expirationConfirmationCode: confirmationCode.expiration,
     };
-
-    return this.userRegistrationInfoRepo.create(userInfo);
+    return userInfo;
   }
 
   private isCorrectNotConfirmedUser(
-    user: FoundUserByEmailOrUsername,
+    user: CreatedUserWithRegistrationInfo,
     userDto: CreateUserDto,
   ): boolean {
     return (

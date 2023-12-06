@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common';
-import { UserFasade } from './user.fasade';
+import { UserFacade } from './user.facade';
 import { CqrsModule } from '@nestjs/cqrs';
-import {
-  UserQueryRepository,
-  UserRegistrationInfoRepository,
-  UserRepository,
-} from './db';
+import { UserQueryRepository, UserRepository } from './db';
 import { UserService } from './user.service';
 import { UserConfig } from './config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -22,12 +18,11 @@ import { USER_USE_CASES } from './application';
     ...USER_USE_CASES,
     UserRepository,
     UserQueryRepository,
-    UserRegistrationInfoRepository,
     UserService,
-    UserFasade,
+    UserFacade,
     IsPasswordsMatchingConstraint,
     IsPasswordMustContain,
   ],
-  exports: [UserFasade],
+  exports: [UserFacade],
 })
 export class UserModule {}
