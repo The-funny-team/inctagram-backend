@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiCookieAuth,
   ApiNoContentResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
@@ -9,6 +10,7 @@ import { AuthSwagger } from './auth.enum';
 
 export function LogoutSwaggerDecorator() {
   return applyDecorators(
+    ApiCookieAuth(),
     ApiOperation({
       summary: AuthSwagger.logout,
     }),
