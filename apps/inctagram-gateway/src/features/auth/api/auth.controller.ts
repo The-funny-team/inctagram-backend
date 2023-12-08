@@ -2,7 +2,6 @@ import { Response } from 'express';
 import {
   Body,
   Controller,
-  Get,
   Headers,
   HttpCode,
   HttpStatus,
@@ -54,7 +53,7 @@ export class AuthController {
     private readonly userFacade: UserFacade,
     private readonly deviceFacade: DeviceFacade,
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   @ApiOperation({
     summary: 'User registration',
@@ -147,7 +146,7 @@ export class AuthController {
     return new ResponseAccessTokenDto(accessToken);
   }
 
-  @Get('google')
+  @Post('google')
   async googleLogin(
     @Query() { code }: GoogleLoginDto,
     @Ip() ip: string,

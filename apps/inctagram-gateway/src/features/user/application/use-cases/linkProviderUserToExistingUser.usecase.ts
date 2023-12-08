@@ -4,28 +4,29 @@ import { Provider } from '@prisma/client';
 import { ProviderUserResponse } from '../../../auth/response';
 import { Result } from '../../../../core';
 import { LinkProviderUserToExistingUser } from '../../types';
-import { v4 as uuidv4 } from 'uuid';
 
 export class LinkProviderUserToExistingUserCommand {
   constructor(
     public provider: Provider,
     public userData: ProviderUserResponse,
-  ) {}
+  ) { }
 }
 
 @CommandHandler(LinkProviderUserToExistingUserCommand)
 export class LinkProviderUserToExistingUserUseCase
   implements ICommandHandler<LinkProviderUserToExistingUserCommand>
 {
-  constructor(private readonly userRepo: UserRepository) {}
+  constructor(private readonly userRepo: UserRepository) { }
 
   async execute({
     provider,
     userData,
   }: LinkProviderUserToExistingUserCommand): Promise<Result<string>> {
-    const userByEmail = await this.userRepo.findByUsernameOrEmail(
-      userData.email,
-    );
+    let userByEmail = await this.userRepo.findByUsernameOrEmail(userData.email);
+
+    if (!userByEmail) {
+      userByEmail = await this.userRepo.findByUsernameOrEmail(userData.name);
+    }
 
     let userId: string;
     if (!userByEmail) {
@@ -50,7 +51,8 @@ export class LinkProviderUserToExistingUserUseCase
     provider: Provider,
     userData: ProviderUserResponse,
   ) {
-    const username = `client_${uuidv4()}`;
+    const numberClientUsers = await this.userRepo.numberClientUsers();
+    const username = `client${numberClientUsers + 1}`;
     return this.userRepo.createUserAndProviderUser(
       userData,
       provider,

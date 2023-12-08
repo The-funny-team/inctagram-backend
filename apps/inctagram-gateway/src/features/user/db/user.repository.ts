@@ -12,7 +12,7 @@ import { ProviderUserResponse } from '../../auth/response';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
 
   async create(
     userDto: CreateUserDto,
@@ -156,6 +156,12 @@ export class UserRepository {
         name: data.name,
         email: data.email,
       },
+    });
+  }
+
+  async numberClientUsers() {
+    return this.prismaService.user.count({
+      where: { name: { startsWith: 'client' } },
     });
   }
 }
