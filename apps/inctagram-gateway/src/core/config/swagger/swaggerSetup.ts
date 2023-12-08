@@ -4,6 +4,7 @@ import { APP_GLOBAL_PREFIX } from '../config.constants';
 
 export function swaggerSetup(app: INestApplication) {
   const config = new DocumentBuilder()
+    .addCookieAuth('refreshToken')
     .setTitle('Intagram backend')
     .setDescription('The intagram API description')
     .setVersion('1.0')

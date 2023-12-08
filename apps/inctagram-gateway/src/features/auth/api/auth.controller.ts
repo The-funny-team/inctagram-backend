@@ -34,6 +34,7 @@ import { ResponseAccessTokenDto } from '../../device/responses';
 import { CurrentDevice } from '../../../core/decorators/currentDevice.decorator';
 import { RefreshJwtGuard } from '../guards/refreshJwt.guard';
 import { LogoutSwaggerDecorator } from '../../../core/swagger/auth/logout.swagger.decorator';
+import { LoginSwaggerDecorator } from '../../../core/swagger/auth/login.swagger.decorator';
 
 const baseUrl = '/auth';
 
@@ -122,6 +123,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @LoginSwaggerDecorator()
   @UseGuards(PasswordAuthGuard)
   @HttpCode(HttpStatus.OK)
   async login(
