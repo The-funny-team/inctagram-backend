@@ -53,7 +53,7 @@ export class AuthController {
     private readonly userFacade: UserFacade,
     private readonly deviceFacade: DeviceFacade,
     private readonly authService: AuthService,
-  ) { }
+  ) {}
 
   @ApiOperation({
     summary: 'User registration',

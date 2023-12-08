@@ -9,14 +9,14 @@ export class LinkProviderUserToExistingUserCommand {
   constructor(
     public provider: Provider,
     public userData: ProviderUserResponse,
-  ) { }
+  ) {}
 }
 
 @CommandHandler(LinkProviderUserToExistingUserCommand)
 export class LinkProviderUserToExistingUserUseCase
   implements ICommandHandler<LinkProviderUserToExistingUserCommand>
 {
-  constructor(private readonly userRepo: UserRepository) { }
+  constructor(private readonly userRepo: UserRepository) {}
 
   async execute({
     provider,

@@ -12,7 +12,7 @@ import { ProviderUserResponse } from '../../auth/response';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async create(
     userDto: CreateUserDto,
