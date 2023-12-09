@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserPasswordRecoveryDto } from '../../dto';
 import { validateOrRejectModel } from '../../../../core/config';
 import { Result } from '../../../../core/result';
-import { UserRegistrationInfoRepository, UserRepository } from '../../db';
+import { UserRepository } from '../../db';
 import {
   USER_RECOVERY_PASSWORD_EVENT_NAME,
   UserRecoveryPasswordEvent,
@@ -29,7 +29,6 @@ export class UserPasswordRecoveryUseCase
     private readonly eventEmitter: EventEmitter2,
     private readonly userService: UserService,
     private readonly userConfig: UserConfig,
-    private readonly userRegistrationInfoRepo: UserRegistrationInfoRepository,
   ) {}
 
   async execute({
@@ -71,7 +70,7 @@ export class UserPasswordRecoveryUseCase
       ),
     };
 
-    await this.userRegistrationInfoRepo.update(userInfoId, {
+    await this.userRepo.updateRegistrationInfo(userInfoId, {
       ...dataCode,
     });
 

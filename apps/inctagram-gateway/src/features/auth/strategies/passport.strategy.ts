@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { UserFasade } from '../../user/user.fasade';
+import { UserFacade } from '../../user/user.facade';
 import { LoginDto } from '../dto/login.dto';
 import { UserId } from '../../user/types/userId.type';
 
 @Injectable()
 export class PasswordStrategy extends PassportStrategy(Strategy) {
-  constructor(private userFacade: UserFasade) {
+  constructor(private userFacade: UserFacade) {
     super({
       usernameField: 'email',
     });

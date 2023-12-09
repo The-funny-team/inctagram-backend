@@ -5,12 +5,14 @@ import { ConfirmationRegistrationUseCase } from './confirmationRegistration.usec
 import { UserPasswordRecoveryUseCase } from './userPasswordRecovery.usecase';
 import { NewPasswordUseCase } from './newPassword.usecase';
 import { CheckUserCredentialsUseCase } from './checkUserCredentials';
+import { LinkProviderUserToExistingUserUseCase } from './linkProviderUserToExistingUser.usecase';
 
 export * from './createUser.usecase';
 export * from './confirmationRegistration.usecase';
 export * from './userPasswordRecovery.usecase';
 export * from './newPassword.usecase';
 export * from './checkUserCredentials';
+export * from './linkProviderUserToExistingUser.usecase';
 
 export const USER_USE_CASES: Type<ICommandHandler>[] = [
   CreateUserUseCase,
@@ -18,4 +20,5 @@ export const USER_USE_CASES: Type<ICommandHandler>[] = [
   UserPasswordRecoveryUseCase,
   NewPasswordUseCase,
   CheckUserCredentialsUseCase,
+  LinkProviderUserToExistingUserUseCase,
 ];

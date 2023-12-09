@@ -10,11 +10,13 @@ import { Result } from '../../core';
 import { CreateTokensType } from './types/createTokens.type';
 import { DeviceInfo } from './types/deviceInfo.type';
 import { UserId } from '../user/types';
+import { DeviceRepository } from './db';
 
 @Injectable()
 export class DeviceFacade {
   constructor(
     private readonly commandBus: CommandBus, // private readonly deviceQueryRepo: DeviceQueryRepository,
+    private readonly deviceRepo: DeviceRepository,
   ) {}
 
   useCases = {
@@ -31,6 +33,11 @@ export class DeviceFacade {
     ): Promise<Result> => this.deleteDeviceByIdAndUserId(userId, deviceId),
   };
 
+  repository = {
+    deleteDevicesByUserId: (userId: string): Promise<void> =>
+      this.deleteDevicesByUserId(userId),
+  };
+
   private async createDevice(
     deviceDto: DeviceDto,
   ): Promise<Result<CreateTokensType>> {
@@ -38,6 +45,10 @@ export class DeviceFacade {
       CreateDeviceCommand,
       Result<CreateTokensType>
     >(new CreateDeviceCommand(deviceDto));
+  }
+
+  private async deleteDevicesByUserId(userId: string): Promise<void> {
+    await this.deviceRepo.deleteDevicesByUserId(userId);
   }
 
   private async checkDeviceCredentials(

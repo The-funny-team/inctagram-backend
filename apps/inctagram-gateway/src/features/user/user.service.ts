@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
-import { UserRegistrationInfoRepository } from './db';
 import { v4 as uuidv4 } from 'uuid';
 import add from 'date-fns/add';
 import { UserConfig } from './config';
@@ -11,11 +10,12 @@ import {
   UserInfoCreatedEvent,
   UserInfoUpdatedEvent,
 } from './application';
+import { UserRepository } from './db';
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly userRegistrationInfoRepo: UserRegistrationInfoRepository,
+    private readonly userRepo: UserRepository,
     private readonly userConfig: UserConfig,
     private readonly eventEmitter: EventEmitter2,
   ) {}
@@ -58,7 +58,7 @@ export class UserService {
 
   async updateConfirmationCode(userInfoId: string, email: string) {
     const confirmationCode = this.generateConfirmationCode();
-    const updatedUserInfo = await this.userRegistrationInfoRepo.update(
+    const updatedUserInfo = await this.userRepo.updateRegistrationInfo(
       userInfoId,
       {
         confirmationCode: confirmationCode.code,
