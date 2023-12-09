@@ -65,3 +65,11 @@ export function getErrorMessagesBadRequest() {
     ],
   };
 }
+
+export function findUUIDv4(message: string) {
+  const res =
+    /[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}/i.exec(
+      message,
+    );
+  return res.length ? res[0] : '';
+}

@@ -5,6 +5,7 @@ import { EmailManagerModule } from '../../src/core/email-manager/email-manager.m
 import { EmailAdapter } from '../../src/infrastructure';
 import { AuthTestHelper } from './testHelpers/auth.test.helper';
 import {
+  findUUIDv4,
   getAppForE2ETesting,
   getErrorMessagesBadRequest,
   randomString,
@@ -38,11 +39,19 @@ describe('AuthController (e2e) test', () => {
     })
       .overrideProvider(EmailAdapter)
       .useValue(emailAdapterMock)
+
       .compile();
 
     app = await getAppForE2ETesting(testingModule);
 
     authTestHelper = new AuthTestHelper(app);
+  });
+
+  beforeEach(async () => {});
+
+  afterEach(async () => {
+    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   afterAll(async () => {
@@ -205,15 +214,9 @@ describe('AuthController (e2e) test', () => {
       expect(mock.calls[lastMockCall][0]).toBe(userDto.email);
 
       const message = mock.calls[lastMockCall][2];
-      const startIndex = message.indexOf('code');
-      expect(startIndex).not.toBe(-1);
+      const codeConfirmation = findUUIDv4(message);
 
-      const codeConfirmation = message.slice(
-        startIndex + 5,
-        message.indexOf("'", startIndex) !== -1
-          ? message.indexOf("'", startIndex)
-          : message.length,
-      );
+      expect(codeConfirmation.length).not.toBe(0);
 
       await authTestHelper.confirmRegistration({ code: codeConfirmation });
     });
