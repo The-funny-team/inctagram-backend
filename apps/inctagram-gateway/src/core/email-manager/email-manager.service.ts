@@ -25,7 +25,7 @@ export class EmailManagerService {
   async sendEmailConfirmationMessage(payload: UserInfoCreatedEvent) {
     const textMessage = `<h1>Thank for your registration</h1>
           <p>To finish registration please follow the link below:
-              <a href='${this.APP_URL}?code=${payload.configmationCode}'>complete registration</a>
+              <a href='${this.APP_URL}/${payload.configmationCode}'>complete registration</a>
           </p>`;
 
     await this.emailAdapter.sendEmail(
@@ -39,7 +39,7 @@ export class EmailManagerService {
   async sendResendingEmailConfirmationMessage(payload: UserInfoUpdatedEvent) {
     const textMessage = `<h1>Resending email confirmation</h1>
           <p>To finish registration please follow the link below:
-              <a href='${this.APP_URL}?code=${payload.configmationCode}'>complete registration</a>
+              <a href='${this.APP_URL}/${payload.configmationCode}'>complete registration</a>
           </p>`;
 
     await this.emailAdapter.sendEmail(
@@ -53,7 +53,7 @@ export class EmailManagerService {
   async sendPasswordRecovery(payload: UserRecoveryPasswordEvent) {
     const textMessage = `<h1>Password recovery</h1>
           <p>To finish password recovery please follow the link below:
-              <a href='${this.APP_URL}?recoveryCode=${payload.recoveryCode}'>recovery password</a>
+              <a href='${this.APP_URL}/${payload.recoveryCode}'>recovery password</a>
           </p>`;
 
     await this.emailAdapter.sendEmail(
