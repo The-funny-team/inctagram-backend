@@ -16,7 +16,7 @@ import {
   UserPasswordRecoveryDto,
 } from '../../user/dto';
 import { UserFasade } from '../../user/user.fasade';
-import { ConfirmationCodeDto } from '../dto';
+import { ConfirmationCodeDto, RegistrationEmailResendingDto } from '../dto';
 import {
   ApiBadRequestResponse,
   ApiNoContentResponse,
@@ -84,6 +84,23 @@ export class AuthController {
   async confirmRegistration(@Body() confirmDto: ConfirmationCodeDto) {
     const confirmationResult =
       await this.userFasade.useCases.confirmationRegistration(confirmDto);
+    if (!confirmationResult.isSuccess) {
+      throw confirmationResult.err;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Resending confirmation code',
+  })
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse({ type: BadRequestResponse })
+  @Post('registration-email-resending')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async resendingConfirmationCodeToUser(
+    @Body() resendingDto: RegistrationEmailResendingDto,
+  ) {
+    const confirmationResult =
+      await this.userFasade.useCases.registrationEmailResending(resendingDto);
     if (!confirmationResult.isSuccess) {
       throw confirmationResult.err;
     }
