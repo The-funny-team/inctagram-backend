@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { CreateUserDto, NewPasswordDto, UserPasswordRecoveryDto } from './dto';
+import {
+  CreateUserDto,
+  NewPasswordDto,
+  RegistrationEmailResendingDto,
+  UserPasswordRecoveryDto,
+} from './dto';
 import { UserQueryRepository } from './db/user.query.repository';
 import { ResponseUserDto } from './responses';
 import { Provider, User } from '@prisma/client';
@@ -10,6 +15,7 @@ import {
   CreateUserCommand,
   LinkProviderUserToExistingUserCommand,
   NewPasswordCommand,
+  PasswordRecoveryResendingCommand,
 } from './application';
 import { ConfirmationCodeDto } from '../auth/dto';
 import { CheckUserCredentialsCommand } from './application/use-cases/checkUserCredentials';
@@ -22,6 +28,8 @@ import {
   UpdateUserProviderByProviderIdParams,
 } from './types';
 import { ProviderUserResponse } from '../auth/response';
+import { RegistrationEmailResendingCommand } from './application/use-cases/registrationEmailResending.usecase';
+import { PasswordRecoveryResendingDto } from './dto/passwordRecoveryResending.dto';
 
 @Injectable()
 export class UserFacade {
@@ -57,6 +65,11 @@ export class UserFacade {
       userData: ProviderUserResponse,
     ): Promise<Result<string>> =>
       this.linkProviderUserToExistingUser(provider, userData),
+    registrationEmailResending: (
+      resendingDto: RegistrationEmailResendingDto,
+    ): Promise<Result> => this.registrationEmailResending(resendingDto),
+    passwordRecoveryResending: (resendingDto: PasswordRecoveryResendingDto) =>
+      this.passwordRecoveryResending(resendingDto),
   };
   queries = { getUserViewById: (id: string) => this.getUserViewById(id) };
 
@@ -121,5 +134,21 @@ export class UserFacade {
       LinkProviderUserToExistingUserCommand,
       Result<string>
     >(new LinkProviderUserToExistingUserCommand(provider, userData));
+  }
+
+  private async registrationEmailResending(
+    resendingDto: RegistrationEmailResendingDto,
+  ): Promise<Result> {
+    return this.commandBus.execute<RegistrationEmailResendingCommand, Result>(
+      new RegistrationEmailResendingCommand(resendingDto),
+    );
+  }
+
+  private passwordRecoveryResending(
+    resendingDto: PasswordRecoveryResendingDto,
+  ) {
+    return this.commandBus.execute<PasswordRecoveryResendingCommand, Result>(
+      new PasswordRecoveryResendingCommand(resendingDto),
+    );
   }
 }

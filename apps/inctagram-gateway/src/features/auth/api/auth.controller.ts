@@ -2,6 +2,7 @@ import { Response } from 'express';
 import {
   Body,
   Controller,
+  Get,
   Headers,
   HttpCode,
   HttpStatus,
@@ -14,18 +15,15 @@ import {
 import {
   CreateUserDto,
   NewPasswordDto,
+  RegistrationEmailResendingDto,
   UserPasswordRecoveryDto,
 } from '../../user/dto';
 import { UserFacade } from '../../user/user.facade';
-import {
-  ConfirmationCodeDto,
-  RegistrationEmailResendingDto,
-  GoogleLoginDto,
-  LoginProviderDto,
-} from '../dto';
+import { ConfirmationCodeDto, GoogleLoginDto, LoginProviderDto } from '../dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiHeader,
   ApiNoContentResponse,
   ApiOperation,
   ApiTags,
@@ -41,6 +39,7 @@ import { CurrentDevice } from '../../../core/decorators/currentDevice.decorator'
 import { RefreshJwtGuard } from '../guards/refreshJwt.guard';
 import { LogoutSwaggerDecorator } from '../../../core/swagger/auth/logout.swagger.decorator';
 import { AuthService } from '../auth.service';
+import { PasswordRecoveryResendingDto } from '../../user/dto/passwordRecoveryResending.dto';
 
 const baseUrl = '/auth';
 
@@ -109,10 +108,10 @@ export class AuthController {
   async resendingConfirmationCodeToUser(
     @Body() resendingDto: RegistrationEmailResendingDto,
   ) {
-    const confirmationResult =
+    const resendingResult =
       await this.userFacade.useCases.registrationEmailResending(resendingDto);
-    if (!confirmationResult.isSuccess) {
-      throw confirmationResult.err;
+    if (!resendingResult.isSuccess) {
+      throw resendingResult.err;
     }
   }
 
@@ -131,6 +130,23 @@ export class AuthController {
     );
     if (!recoveryResult.isSuccess) {
       throw recoveryResult.err;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Resending password recovery code',
+  })
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse({ type: BadRequestResponse })
+  @Post('password-recovery-resending')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async passwordRecoveryResending(
+    @Body() resendingDto: PasswordRecoveryResendingDto,
+  ) {
+    const resendingResult =
+      await this.userFacade.useCases.passwordRecoveryResending(resendingDto);
+    if (!resendingResult.isSuccess) {
+      throw resendingResult.err;
     }
   }
 
@@ -188,7 +204,10 @@ export class AuthController {
     return;
   }
 
-  @Post('google')
+  @ApiOperation({
+    summary: 'Oauth2 google authorization',
+  })
+  @Get('google')
   async googleLogin(
     @Query() { code }: GoogleLoginDto,
     @Ip() ip: string,

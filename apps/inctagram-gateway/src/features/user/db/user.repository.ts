@@ -87,17 +87,17 @@ export class UserRepository {
     });
   }
 
-  async findByCodeConfirmation(
-    code: string,
-  ): Promise<UserRegistrationInfo | null> {
+  async findByCodeConfirmation(code: string) {
     return this.prismaService.userRegistrationInfo.findFirst({
       where: { confirmationCode: code },
+      include: { user: true },
     });
   }
 
   async findByRecoveryCode(recoveryCode: string) {
     return this.prismaService.userRegistrationInfo.findFirst({
       where: { recoveryCode },
+      include: { user: true },
     });
   }
 

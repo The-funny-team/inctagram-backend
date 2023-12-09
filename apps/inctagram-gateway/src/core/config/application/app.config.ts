@@ -21,4 +21,11 @@ export class AppConfig {
       this.configService.get<string>('FRONTEND_EMAIL_CONFIRMATION_URL') ?? ''
     );
   }
+  getFrontendEmailCConfirmationPasswordRecoveryUrl(): string {
+    return (
+      this.configService.get<string>(
+        'FRONTEND_EMAIL_CONFIRMATION_PASSWORD_RECOVERY_URL',
+      ) ?? ''
+    );
+  }
 }
