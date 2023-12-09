@@ -20,6 +20,7 @@ import {
   ERROR_PROVIDER_AUTHORIZATION_CODE,
 } from '../../../device/device.constants';
 import { GoogleOauthToken, GoogleUserResult } from '../../../device/types';
+import qs from 'qs';
 
 export class GoogleLoginCommand {
   constructor(public providerDto: LoginProviderDto) {}
@@ -84,7 +85,7 @@ export class GoogleLoginUseCase
     try {
       const { data } = await this.httpService.axiosRef.post<GoogleOauthToken>(
         rootURl,
-        JSON.stringify(options),
+        qs.stringify(options),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class GoogleLoginDto {
   @ApiProperty({
@@ -7,7 +7,7 @@ export class GoogleLoginDto {
     type: 'string',
     example: '',
   })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   code: string;
 }

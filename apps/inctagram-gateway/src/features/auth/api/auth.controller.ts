@@ -23,7 +23,6 @@ import { ConfirmationCodeDto, GoogleLoginDto, LoginProviderDto } from '../dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
-  ApiHeader,
   ApiNoContentResponse,
   ApiOperation,
   ApiTags,

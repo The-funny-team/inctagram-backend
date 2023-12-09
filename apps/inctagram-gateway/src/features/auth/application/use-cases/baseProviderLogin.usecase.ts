@@ -1,5 +1,5 @@
 import { Provider } from '@prisma/client';
-import { Result, validateOrRejectModel } from '../../../../core';
+import { Result } from '../../../../core';
 import { UserFacade } from '../../../user/user.facade';
 import { DeviceFacade } from '../../../device/device.facade';
 import { LoginProviderDto } from '../../dto';
@@ -21,8 +21,6 @@ export abstract class BaseProvideLoginUseCase {
   }: {
     providerDto: LoginProviderDto;
   }): Promise<Result<CreateTokensType>> {
-    await validateOrRejectModel(providerDto, LoginProviderDto);
-
     const resultProviderUser = await this.getProviderUser(providerDto.code);
     if (!resultProviderUser.isSuccess) {
       return Result.Err(resultProviderUser.err);
