@@ -6,6 +6,6 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [JwtModule.register({})],
   providers: [JwtConfig, JwtAdapter],
-  exports: [JwtAdapter],
+  exports: [JwtAdapter, JwtConfig],
 })
 export class JWTModule {}

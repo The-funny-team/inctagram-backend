@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserService } from '../../user.service';
 import { UserRepository } from '../../db';
-import { UserIdType } from '../../types/userId.type';
+import { UserId } from '../../types';
 import { Result, UnauthorizedError } from '../../../../core';
 import {
   ERROR_PASSWORD_IS_WRONG,
@@ -25,7 +25,7 @@ export class CheckUserCredentialsUseCase
 
   async execute({
     loginDto,
-  }: CheckUserCredentialsCommand): Promise<Result<UserIdType>> {
+  }: CheckUserCredentialsCommand): Promise<Result<UserId>> {
     const user = await this.userRepository.findByEmail(loginDto.email);
 
     if (!user) return Result.Err(new UnauthorizedError(USER_NOT_FOUND));

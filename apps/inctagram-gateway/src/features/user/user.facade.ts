@@ -14,7 +14,7 @@ import {
 import { ConfirmationCodeDto } from '../auth/dto';
 import { CheckUserCredentialsCommand } from './application/use-cases/checkUserCredentials';
 import { LoginDto } from '../auth/dto/login.dto';
-import { UserIdType } from './types/userId.type';
+import { UserId } from './types/userId.type';
 import { UserPasswordRecoveryCommand } from './application/use-cases/userPasswordRecovery.usecase';
 import { UserRepository } from './db';
 import {
@@ -46,7 +46,7 @@ export class UserFacade {
     createUser: (userDto: CreateUserDto) => this.createUser(userDto),
     confirmationRegistration: (confirmDto: ConfirmationCodeDto) =>
       this.confirmationRegistration(confirmDto),
-    checkUserCredentials: (loginDto: LoginDto): Promise<Result<UserIdType>> =>
+    checkUserCredentials: (loginDto: LoginDto): Promise<Result<UserId>> =>
       this.checkUserCredentials(loginDto),
     passwordRecovery: (passwordRRecoveryDto: UserPasswordRecoveryDto) =>
       this.passwordRecovery(passwordRRecoveryDto),
@@ -76,10 +76,9 @@ export class UserFacade {
   }
 
   private async checkUserCredentials(loginDto: LoginDto) {
-    return this.commandBus.execute<
-      CheckUserCredentialsCommand,
-      Result<UserIdType>
-    >(new CheckUserCredentialsCommand(loginDto));
+    return this.commandBus.execute<CheckUserCredentialsCommand, Result<UserId>>(
+      new CheckUserCredentialsCommand(loginDto),
+    );
   }
 
   private async passwordRecovery(

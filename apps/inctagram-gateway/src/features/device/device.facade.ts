@@ -1,9 +1,15 @@
 import { CommandBus } from '@nestjs/cqrs';
-import { CreateDeviceCommand } from './application';
+import {
+  CheckDeviceCredentialsCommand,
+  CreateDeviceCommand,
+  DeleteDeviceCommand,
+} from './application';
 import { Injectable } from '@nestjs/common';
 import { DeviceDto } from './dto';
 import { Result } from '../../core';
 import { CreateTokensType } from './types/createTokens.type';
+import { DeviceInfo } from './types/deviceInfo.type';
+import { UserId } from '../user/types';
 import { DeviceRepository } from './db';
 
 @Injectable()
@@ -16,6 +22,15 @@ export class DeviceFacade {
   useCases = {
     createDevice: (deviceDto: DeviceDto): Promise<Result<CreateTokensType>> =>
       this.createDevice(deviceDto),
+
+    checkDeviceCredentials: (
+      devicePayload: DeviceInfo & UserId,
+    ): Promise<Result> => this.checkDeviceCredentials(devicePayload),
+
+    deleteDeviceByIdAndUserId: (
+      userId: string,
+      deviceId: string,
+    ): Promise<Result> => this.deleteDeviceByIdAndUserId(userId, deviceId),
   };
 
   repository = {
@@ -34,5 +49,22 @@ export class DeviceFacade {
 
   private async deleteDevicesByUserId(userId: string): Promise<void> {
     await this.deviceRepo.deleteDevicesByUserId(userId);
+  }
+
+  private async checkDeviceCredentials(
+    devicePayload: DeviceInfo & UserId,
+  ): Promise<Result> {
+    return this.commandBus.execute<CheckDeviceCredentialsCommand, Result>(
+      new CheckDeviceCredentialsCommand(devicePayload),
+    );
+  }
+
+  private async deleteDeviceByIdAndUserId(
+    userId: string,
+    deviceId: string,
+  ): Promise<Result> {
+    return this.commandBus.execute<DeleteDeviceCommand, Result>(
+      new DeleteDeviceCommand(userId, deviceId),
+    );
   }
 }

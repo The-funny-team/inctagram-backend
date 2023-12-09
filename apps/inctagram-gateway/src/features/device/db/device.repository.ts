@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../core/prisma/prisma.servise';
-import { CreateDeviceType } from '../types/createDevice.type';
+import { CreateDeviceType } from '../types';
+import { Device } from '@prisma/client';
 
 @Injectable()
 export class DeviceRepository {
@@ -15,6 +16,35 @@ export class DeviceRepository {
         userId: deviceDto.userId,
         lastActiveDate: deviceDto.lastActiveDate,
         expirationDate: deviceDto.expirationDate,
+      },
+    });
+    return;
+  }
+
+  async findByUserIdAndDeviceId(
+    userId: string,
+    deviceId: string,
+  ): Promise<Device | null> {
+    return this.prismaService.device.findFirst({
+      where: {
+        userId,
+        id: deviceId,
+      },
+    });
+  }
+
+  async findById(id: string): Promise<Device | null> {
+    return this.prismaService.device.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async deleteById(id: string): Promise<void> {
+    await this.prismaService.device.delete({
+      where: {
+        id,
       },
     });
     return;
