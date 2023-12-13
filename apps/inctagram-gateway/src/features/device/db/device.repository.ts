@@ -49,4 +49,8 @@ export class DeviceRepository {
     });
     return;
   }
+
+  async deleteDevicesByUserId(userId: string) {
+    await this.prismaService.device.deleteMany({ where: { userId } });
+  }
 }
