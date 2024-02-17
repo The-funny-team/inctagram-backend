@@ -13,10 +13,47 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
+    "esModuleInterop": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {}
+    "paths": {
+      // "src/*": ["./src/*"],
+      "@libs/*": ["libs/*"],
+      "@gateway/*": ["apps/inctagram-gateway/*"],
+      "@fileService/*": ["apps/inctagram-upload-files/*"],
+
+      // "@src": [
+      //   "apps/inctagram-gateway/src/"
+      // ],
+      // "@src/*": [
+      //   "apps/inctagram-gateway/src/*"
+      // ],
+      // "@prisma": [
+      //   "apps/inctagram-gateway/src/core/prisma"
+      // ],
+      // "@prisma/*": [
+      //   "apps/inctagram-gateway/src/core/prisma/*"
+      // ],
+      // "@core": [
+      //   "apps/inctagram-gateway/src/core/"
+      // ],
+      // "@core/*": [
+      //   "apps/inctagram-gateway/src/core/*"
+      // ],
+      // "@auth": [
+      //   "apps/inctagram-gateway/src/features/auth/"
+      // ],
+      // "@auth/*": [
+      //   "apps/inctagram-gateway/src/features/auth/*"
+      // ],
+      // "@user": [
+      //   "apps/inctagram-gateway/src/features/user/"
+      // ],
+      // "@user/*": [
+      //   "apps/inctagram-gateway/src/features/user/*"
+      // ],
+    }
   }
 }

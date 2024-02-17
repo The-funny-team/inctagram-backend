@@ -3,7 +3,7 @@
 /node_modules
 yarn
 .idea
-
+.env
 
 # Logs
 logs
@@ -36,3 +36,8 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.history
+
+.env
+.gateway.development.env
+.upload.files.development.env

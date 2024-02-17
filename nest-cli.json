@@ -3,6 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/inctagram-gateway/src",
   "compilerOptions": {
+    "plugins": [
+      "@nestjs/swagger"
+    ],
     "deleteOutDir": true,
     "webpack": false,
     "tsConfigPath": "apps/inctagram-gateway/tsconfig.app.json"

@@ -12,23 +12,86 @@ model User {
   id           String   @id @default(uuid())
   name         String   @unique
   email        String   @unique
-  hashPassword String   @map("hash_password")
+  hashPassword String?   @map("hash_password")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
   isDeleted    Boolean  @default(false)
   posts        Post[]
+  userRegistrationInfo UserRegistrationInfo?
+  devices Device[]
+  providers UserProvider[]
+  firstName String? @map("first_name")
+  lastName String? @map("last_name")
+  dateOfBirth DateTime? @map("date_of_birth")
+  country String?
+  city String?
+  aboutMe String? @map("about_me")
+  avatarId String? @map("avatar_id")
 
   @@map("users")
 }
 
+model UserRegistrationInfo {
+  id String @id @default(uuid())
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique @map("user_id")
+  isConfirmed Boolean @default(false) @map("is_confirmed")
+  confirmationCode String? @map("confirmation_code")
+  expirationConfirmationCode DateTime? @map("expiration_confirmation_code")
+  recoveryCode String? @map("recovery_code")
+  expirationRecoveryCode DateTime? @map("expiration_recovery_code")
+
+  @@map("users_registration_info")
+}
+
+model UserProvider {
+  id String @id @default(uuid())
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique @map("user_id")
+  provider Provider
+  providerUserId String @map("provider_user_id")
+  name String?
+  email String?
+
+  @@unique([userId, provider])
+  @@map("user_providers")
+}
+
+enum Provider {
+  GOOGLE
+  GIT_HUB
+}
+
 model Post {
-  id        String   @id @default(uuid())
-  title     String
-  authorId  String
+  id String @id @default(uuid())
+  description String
+  authorId String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isDeleted Boolean  @default(false)
   author    User     @relation(fields: [authorId], references: [id])
+  images PostImage[]
 
   @@map("posts")
+}
+
+model PostImage {
+  id String @id @default(uuid())
+  postId String
+  imageId String? @map("image_id")
+  post Post @relation(fields: [postId], references: [id])
+
+  @@map("post_image")
+}
+
+model Device {
+  id        String   @id @default(uuid())
+  ip        String
+  title     String
+  lastActiveDate DateTime   @map("last_active_date")
+  expirationDate DateTime   @map("expiration_date")
+  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  @@map("devices")
 }
