@@ -3,6 +3,8 @@ import { PrismaService } from '../../../core/prisma/prisma.servise';
 import { FileServiceAdapter, NotFoundError, Result } from '../../../core';
 import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePost.dto';
 import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
+import { Post } from '@prisma/client';
+import { SortDirection } from '@gateway/src/features/public/post/api/sortDirection';
 
 @Injectable()
 export class PostQueryRepository {
@@ -34,5 +36,16 @@ export class PostQueryRepository {
     }
 
     return Result.Ok(ResponsePostDto.getView(post, result.value.urls));
+  }
+
+  async getPosts() {
+    const posts: Post[] = await this.prismaService.post.findMany({
+      orderBy: [
+        { createdAt: SortDirection.DESC },
+        { updatedAt: SortDirection.DESC },
+      ],
+      skip: 0,
+      take: 4,
+    });
   }
 }
