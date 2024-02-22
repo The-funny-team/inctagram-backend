@@ -10,13 +10,14 @@ import {
 } from '@gateway/src/core';
 import { ClientsModule } from '@nestjs/microservices';
 import { PostImageRepository } from '@gateway/src/features/post/db/postImage.repository';
+import { PublicPostController } from '@gateway/src/features/post/api/public.post.controller';
 
 @Module({
   imports: [
     CqrsModule,
     ClientsModule.registerAsync([getClientFileServiceConfig()]),
   ],
-  controllers: [PostController],
+  controllers: [PostController, PublicPostController],
   providers: [
     PostRepository,
     PostImageRepository,

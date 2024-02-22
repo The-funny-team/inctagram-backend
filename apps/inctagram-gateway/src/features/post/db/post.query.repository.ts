@@ -4,7 +4,7 @@ import { FileServiceAdapter, NotFoundError, Result } from '../../../core';
 import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePost.dto';
 import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
 import { Post } from '@prisma/client';
-import { SortDirection } from '@gateway/src/features/public/post/api/sortDirection';
+import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 
 @Injectable()
 export class PostQueryRepository {
@@ -38,14 +38,17 @@ export class PostQueryRepository {
     return Result.Ok(ResponsePostDto.getView(post, result.value.urls));
   }
 
-  async getPosts() {
+  async getPosts(query: PostQueryDto) {
     const posts: Post[] = await this.prismaService.post.findMany({
-      orderBy: [
-        { createdAt: SortDirection.DESC },
-        { updatedAt: SortDirection.DESC },
-      ],
-      skip: 0,
-      take: 4,
+      orderBy: { [query.sortField]: query.sortDirection },
+      skip: query.skip,
+      take: query.take,
     });
+
+    if (!posts.length) {
+      return Result.Err(new NotFoundError(ERROR_POST_NOT_FOUND));
+    }
+
+    return Result.Ok(posts);
   }
 }
