@@ -81,12 +81,7 @@ export class S3StorageAdapter {
       Delete: { Objects: objectsToDelete },
       Quiet: false,
     };
-    try {
-      return await this.s3Client.send(new DeleteObjectsCommand(bucketParams));
-    } catch (exception) {
-      this.logger.error(exception);
-      throw exception;
-    }
+    return await this.s3Client.send(new DeleteObjectsCommand(bucketParams));
   }
   getUrlFile(url: string) {
     return `${this.settings.AMAZON_CLOUD_URL_FILES}/${url}`;

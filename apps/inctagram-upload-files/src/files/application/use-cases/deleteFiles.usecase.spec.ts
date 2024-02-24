@@ -16,9 +16,18 @@ describe('DeleteFileUseCases', () => {
   let fileStorageAdapter: S3StorageAdapter;
   let fileRepo: FileRepository;
   let deleteFilesUseCase: DeleteFilesUseCase;
+  //let fileModelMock: jest.Mocked<Model<File>>;
 
   const mockFileModel = {
-    save: jest.fn(),
+    db: {
+      startSession: jest.fn(() => ({
+        startTransaction: jest.fn(),
+        endSession: jest.fn(),
+        abortTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+      })),
+    },
+    deleteMany: jest.fn(),
   };
 
   const mockS3StorageAdapter = {
@@ -43,6 +52,7 @@ describe('DeleteFileUseCases', () => {
     fileStorageAdapter = module.get<S3StorageAdapter>(S3StorageAdapter);
     fileRepo = module.get<FileRepository>(FileRepository);
     deleteFilesUseCase = module.get<DeleteFilesUseCase>(DeleteFilesUseCase);
+    //fileModelMock = module.get(getModelToken(File.name));
   });
 
   afterEach(async () => {
@@ -52,7 +62,7 @@ describe('DeleteFileUseCases', () => {
   });
 
   describe('execute', () => {
-    it('should delete file by id', async () => {
+    it('should delete files', async () => {
       const mockFile = ['ids'];
 
       const spyfindFileByIds = jest
@@ -64,6 +74,8 @@ describe('DeleteFileUseCases', () => {
         .spyOn(fileStorageAdapter, 'deleteImages')
         .mockReturnValueOnce(true as any);
 
+      //mockFileModel.deleteMany.mockRejectedValue(new Error('Delete failed'));
+
       const command = new DeleteFilesCommand(mockFile);
       const result = await deleteFilesUseCase.execute(command);
 
@@ -71,17 +83,18 @@ describe('DeleteFileUseCases', () => {
       expect(fileRepo.findFilesByIds).toHaveBeenCalled();
       expect(findFileResponse).toEqual(mockFile);
 
-      expect(fileRepo.deleteFiles).toHaveBeenCalled();
+      expect(mockFileModel.deleteMany).toHaveBeenCalled();
+
       expect(fileStorageAdapter.deleteImages).toHaveBeenCalled();
 
       expect(result.isSuccess).toBe(true);
     });
-    it('should be file deletion error', async () => {
+
+    it('should be file deletion error, wrong file id', async () => {
       const spyfindFileByIds = jest
         .spyOn(fileRepo, 'findFilesByIds')
         .mockReturnValueOnce(null);
 
-      jest.spyOn(fileRepo, 'deleteFiles').mockReturnValueOnce(true as any);
       jest
         .spyOn(fileStorageAdapter, 'deleteImages')
         .mockReturnValueOnce(true as any);

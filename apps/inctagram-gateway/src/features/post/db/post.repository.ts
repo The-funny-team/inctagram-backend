@@ -13,10 +13,11 @@ export class PostRepository {
   async update(id: string, description: string) {
     return this.prismaService.post.update({
       where: { id },
-      data: { description: description, createdAt: new Date() },
+      data: { description: description, updatedAt: new Date() },
     });
   }
 
+  //TODO: if transation is ok this needs to be deleted
   async createPostWithImages(createDto: CreatePostDto, userId: string) {
     const images = createDto.images.map((image) => ({
       imageId: image,
