@@ -3,8 +3,8 @@ import { PrismaService } from '../../../core/prisma/prisma.servise';
 import { FileServiceAdapter, NotFoundError, Result } from '../../../core';
 import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePost.dto';
 import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
-import { Post } from '@prisma/client';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
+import { FileInfoResponse } from '@libs/contracts';
 
 @Injectable()
 export class PostQueryRepository {
@@ -34,21 +34,40 @@ export class PostQueryRepository {
     if (!result.isSuccess) {
       return Result.Ok(ResponsePostDto.getView(post));
     }
-
-    return Result.Ok(ResponsePostDto.getView(post, result.value.urls));
+    return Result.Ok(ResponsePostDto.getView(post, result.value));
   }
 
-  async getPosts(query: PostQueryDto) {
-    const posts: Post[] = await this.prismaService.post.findMany({
+  async getPosts(query?: PostQueryDto) {
+    const posts = await this.prismaService.post.findMany({
+      where: { isDeleted: false },
       orderBy: { [query.sortField]: query.sortDirection },
       skip: query.skip,
       take: query.take,
+      include: { images: true },
     });
 
     if (!posts.length) {
       return Result.Err(new NotFoundError(ERROR_POST_NOT_FOUND));
     }
 
-    return Result.Ok(posts);
+    const imageIds = posts.flatMap((post) =>
+      post.images.map((image) => image.imageId),
+    );
+
+    const imagesData: Result<FileInfoResponse[]> =
+      await this.fileServiceAdapter.getFilesInfo(imageIds);
+
+    let mappedPostsView: ResponsePostDto[];
+
+    if (!imagesData.isSuccess) {
+      mappedPostsView = posts.map((post) => ResponsePostDto.getView(post));
+      return Result.Ok(mappedPostsView);
+    }
+
+    mappedPostsView = posts.map((post) =>
+      ResponsePostDto.getView(post, imagesData.value),
+    );
+
+    return Result.Ok(mappedPostsView);
   }
 }

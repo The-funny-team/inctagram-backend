@@ -22,6 +22,6 @@ export class PostQueryDto {
 
   @IsOptional()
   @IsInt()
-  @ApiProperty({ description: 'Number of items to take', default: 10 })
+  @ApiProperty({ description: 'Number of items to take', default: undefined })
   take?: number;
 }

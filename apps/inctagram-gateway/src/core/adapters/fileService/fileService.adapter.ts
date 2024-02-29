@@ -1,8 +1,8 @@
 import {
   FileDeleteResponse,
+  FileInfoResponse,
   FileUploadRequest,
   FileUploadResponse,
-  FilesUrlResponse,
 } from '@libs/contracts';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -85,12 +85,12 @@ export class FileServiceAdapter {
     }
   }
 
-  async getFilesInfo(ids: string[]): Promise<Result<FilesUrlResponse>> {
+  async getFilesInfo(ids: string[]): Promise<Result<FileInfoResponse[]>> {
     try {
       const responseOfService = this.fileServiceClient
-        .send({ cmd: 'get_files_url' }, { ids })
+        .send({ cmd: 'get_files_info' }, { ids })
         .pipe(timeout(10000));
-      const response: FilesUrlResponse = await firstValueFrom(
+      const response: FileInfoResponse[] = await firstValueFrom(
         responseOfService,
       );
 

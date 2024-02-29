@@ -8,7 +8,7 @@ import {
   FileUrlRequest,
   FileUrlResponse,
   FilesUrlRequest,
-  FilesUrlResponse,
+  FileInfoResponse,
 } from '@libs/contracts';
 import { Controller } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
@@ -53,9 +53,9 @@ export class FilesController {
     return this.filesService.getFileUrl(fileId);
   }
 
-  @MessagePattern({ cmd: 'get_files_url' })
-  async getFilesInfo({ ids }: FilesUrlRequest): Promise<FilesUrlResponse> {
-    return this.filesService.getFilesUrl(ids);
+  @MessagePattern({ cmd: 'get_files_info' })
+  async getFilesInfo({ ids }: FilesUrlRequest): Promise<FileInfoResponse[]> {
+    return this.filesService.getFilesInfo(ids);
   }
 
   @MessagePattern({ cmd: 'update_owner_id_file' })

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { S3StorageAdapter } from './adapters';
 import {
+  FileInfoResponse,
   FileUpdateOwnerIdRequest,
   FileUpdateOwnerIdResponse,
   FileUrlResponse,
-  FilesUrlResponse,
 } from '@libs/contracts';
 import { FileRepository } from './db/file.repository';
 import {
-  ERROR_FILES_NOT_FOUND,
   ERROR_FILE_NOT_FOUND,
+  ERROR_FILES_NOT_FOUND,
 } from './constants/fileError.constant';
 
 @Injectable()
@@ -36,14 +36,16 @@ export class FilesService {
     return { isSuccess: true };
   }
 
-  async getFilesUrl(ids: string[]): Promise<FilesUrlResponse> {
+  async getFilesInfo(ids: string[]): Promise<FileInfoResponse[]> {
     const files = await this.fileRepo.findFilesByIds(ids);
     if (!files.length) {
       throw new Error(ERROR_FILES_NOT_FOUND);
     }
-
-    return {
-      urls: files.map((file) => this.fileStorageAdapter.getUrlFile(file.url)),
-    };
+    return files.map((file) => {
+      return {
+        ownerId: file.ownerId,
+        url: this.fileStorageAdapter.getUrlFile(file.url),
+      };
+    });
   }
 }

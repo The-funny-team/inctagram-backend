@@ -51,4 +51,13 @@ export class PostTestHelper {
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(expectedCode);
   }
+
+  async getPosts(query?, config: { expectedCode?: number } = {}) {
+    const expectedCode = config.expectedCode ?? HttpStatus.OK;
+
+    return request(this.app.getHttpServer())
+      .get(this.globalPrefix + '/public/post')
+      .send(query)
+      .expect(expectedCode);
+  }
 }

@@ -14,6 +14,8 @@ import { endpoints } from '@gateway/src/features/post/api/post.controller';
 import { PostTestHelper } from '@gateway/test/e2e.tests/testHelpers/post.test.helper';
 import { FileServiceAdapter, Result } from '@gateway/src/core';
 import { Post } from '@prisma/client';
+import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
+import { PostQueryRepository } from '@gateway/src/features/post/db/post.query.repository';
 
 jest.setTimeout(15000);
 
@@ -22,6 +24,8 @@ describe('PostController (e2e) test', () => {
   let authTestHelper: AuthTestHelper;
   let postTestHelper: PostTestHelper;
   let fileServiceAdapter: FileServiceAdapter;
+  const posts: Post[] = [];
+  let postQueryRepo: PostQueryRepository;
 
   const emailAdapterMock = {
     sendEmail: jest.fn(),
@@ -37,6 +41,8 @@ describe('PostController (e2e) test', () => {
 
     fileServiceAdapter =
       testingModule.get<FileServiceAdapter>(FileServiceAdapter);
+
+    postQueryRepo = testingModule.get<PostQueryRepository>(PostQueryRepository);
 
     app = await getAppForE2ETesting(testingModule);
 
@@ -108,24 +114,57 @@ describe('PostController (e2e) test', () => {
     });
 
     it(`${endpoints.createPost()} (POST) Should create post with images`, async () => {
-      jest
-        .spyOn(fileServiceAdapter, 'updateOwnerId')
-        .mockReturnValueOnce(Result.Ok() as any);
+      for (let i = 0; i < 5; i++) {
+        jest
+          .spyOn(fileServiceAdapter, 'updateOwnerId')
+          .mockReturnValueOnce(Result.Ok() as any);
 
-      jest
-        .spyOn(fileServiceAdapter, 'getFilesInfo')
-        .mockReturnValueOnce(Result.Ok('url') as any);
+        jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
+          Result.Ok([
+            {
+              ownerId: 'ownerId',
+              url: 'url',
+            },
+          ]) as any,
+        );
 
-      const createPostDto = postTestHelper.postDto();
-      const createdPost = await postTestHelper.createPost(
-        accessToken,
-        createPostDto,
-        {
-          expectedCode: HttpStatus.CREATED,
-        },
+        const createPostDto = postTestHelper.postDto();
+        const createdPost = await postTestHelper.createPost(
+          accessToken,
+          createPostDto,
+          {
+            expectedCode: HttpStatus.CREATED,
+          },
+        );
+        posts.push(createdPost.body);
+      }
+
+      post = posts[4];
+    });
+
+    it('should get last 4 created posts', async () => {
+      const query: PostQueryDto = {
+        skip: 0,
+        take: 4,
+        sortField: 'createdAt',
+        sortDirection: 'desc',
+      };
+
+      jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
+        Result.Ok([
+          {
+            ownerId: post.id,
+            url: 'url',
+          },
+        ]) as any,
       );
+      const posts = await postQueryRepo.getPosts(query);
+      console.log(posts);
 
-      post = createdPost.body;
+      expect(posts.isSuccess).toBe(true);
+      //expect(posts.value.length).toBe(4);
+      expect(posts.value[0].id).toBe(post.id);
+      expect(posts.value[0].imagesUrl[0]).toEqual('url');
     });
 
     it(`${endpoints.deletePost(
