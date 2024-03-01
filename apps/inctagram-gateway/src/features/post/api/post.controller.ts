@@ -11,14 +11,20 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { UpdatePostDto } from '@gateway/src/features/post/dto/updatePost.dto';
 import { CurrentUserId } from '@gateway/src/core/decorators/currentUserId.decorator';
 import { CommandBus } from '@nestjs/cqrs';
 import { UpdatePostCommand } from '@gateway/src/features/post/application/use-cases/updatePost.usecase';
 import { AccessTokenGuard } from '@gateway/src/features/auth/guards/accessJwt.guard';
-import { Result } from '../../../core';
+import { ApiErrorResponse, NotFoundError, Result } from '../../../core';
 import { PostQueryRepository } from '@gateway/src/features/post/db/post.query.repository';
 import { UpdatePostSwaggerDecorator } from '@gateway/src/core/swagger/post/updatePost.swagger.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -36,6 +42,9 @@ import { CreatePostSwaggerDecorator } from '@gateway/src/core/swagger/post/creat
 import { GetPostViewSwaggerDecorator } from '@gateway/src/core/swagger/post/getPostView.swagger.decorator';
 import { DeletePostCommand } from '@gateway/src/features/post/application/use-cases/deletePost.usecase';
 import { DeletePostSwaggerDecorator } from '@gateway/src/core/swagger/post/deletePost.swagger.decorator';
+import { GetPostsViewSwaggerDecorator } from '@gateway/src/core/swagger/post/getPostsView.swagger.decorator';
+import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
+import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
 
 const baseUrl = '/post';
 
@@ -138,6 +147,26 @@ export class PostController {
       throw postViewResult.err;
     }
     return postViewResult.value;
+  }
+
+  @GetPostsViewSwaggerDecorator()
+  @ApiUnauthorizedResponse({ type: ApiErrorResponse })
+  @Get()
+  async getPosts(
+    @Query() query: PostQueryDto,
+    @CurrentUserId() userId: string,
+  ) {
+    return this.getPostsView(query, userId);
+  }
+
+  private async getPostsView(query: PostQueryDto, userId: string) {
+    const posts = await this.postQueryRepo.getPosts(query, userId);
+
+    if (!posts.isSuccess) {
+      throw new NotFoundError(ERROR_POST_NOT_FOUND);
+    }
+
+    return posts.value;
   }
 
   @DeletePostSwaggerDecorator()
