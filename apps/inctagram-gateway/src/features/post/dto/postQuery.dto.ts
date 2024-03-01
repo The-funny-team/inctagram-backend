@@ -8,10 +8,10 @@ export class PostQueryDto {
   sortDirection?: string = 'asc';
 
   @IsOptional()
-  @IsIn(['createdAt', 'title', 'author'])
+  @IsIn(['createdAt', 'updatedAt', 'authorId'])
   @ApiProperty({
     description: 'Sorting item',
-    default: ['createdAt', 'updatedAt'],
+    default: 'createdAt',
   })
   sortField?: string = 'createdAt';
 
