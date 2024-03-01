@@ -17,7 +17,7 @@ export const endpoints = {
 export class PublicPostController {
   constructor(private readonly postQueryRepo: PostQueryRepository) {}
 
-  @GetPostsViewSwaggerDecorator() //TODO:need to change ResponsePostDto
+  @GetPostsViewSwaggerDecorator()
   @Get()
   async getPosts(@Query() query: PostQueryDto) {
     return this.getPostsView(query);
