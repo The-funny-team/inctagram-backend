@@ -5,6 +5,7 @@ import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePo
 import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { FileInfoResponse } from '@libs/contracts';
+import { WhereClause } from '@gateway/src/features/post/types/whereClause.type';
 
 @Injectable()
 export class PostQueryRepository {
@@ -37,9 +38,18 @@ export class PostQueryRepository {
     return Result.Ok(ResponsePostDto.getView(post, result.value));
   }
 
-  async getPosts(query?: PostQueryDto) {
+  async getPosts(
+    query?: PostQueryDto,
+    userId?: string,
+  ): Promise<Result<ResponsePostDto[]>> {
+    const whereClause: WhereClause = { isDeleted: false };
+
+    if (userId) {
+      whereClause.authorId = userId;
+    }
+
     const posts = await this.prismaService.post.findMany({
-      where: { isDeleted: false },
+      where: whereClause,
       orderBy: { [query.sortField]: query.sortDirection },
       skip: Number(query.skip),
       take: Number(query.take) || undefined,
