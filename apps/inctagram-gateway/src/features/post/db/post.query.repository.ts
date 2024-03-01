@@ -41,8 +41,8 @@ export class PostQueryRepository {
     const posts = await this.prismaService.post.findMany({
       where: { isDeleted: false },
       orderBy: { [query.sortField]: query.sortDirection },
-      skip: query.skip,
-      take: query.take,
+      skip: Number(query.skip),
+      take: Number(query.take) || undefined,
       include: { images: true },
     });
 

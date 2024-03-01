@@ -3,6 +3,7 @@ import request from 'supertest';
 import { getGlobalPrefix, randomString } from '../utils/tests.utils';
 import { CreatePostDto } from '@gateway/src/features/post/dto/createPost.dto';
 import { endpoints } from '@gateway/src/features/post/api/post.controller';
+import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 
 export class PostTestHelper {
   globalPrefix = getGlobalPrefix();
@@ -52,12 +53,13 @@ export class PostTestHelper {
       .expect(expectedCode);
   }
 
-  async getPosts(query?, config: { expectedCode?: number } = {}) {
+  async getPosts(query?: PostQueryDto, config: { expectedCode?: number } = {}) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
 
     return request(this.app.getHttpServer())
       .get(this.globalPrefix + '/public/post')
-      .send(query)
+      .query(query)
+      .send()
       .expect(expectedCode);
   }
 }

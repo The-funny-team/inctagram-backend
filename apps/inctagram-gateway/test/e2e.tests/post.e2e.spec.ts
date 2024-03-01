@@ -15,7 +15,6 @@ import { PostTestHelper } from '@gateway/test/e2e.tests/testHelpers/post.test.he
 import { FileServiceAdapter, Result } from '@gateway/src/core';
 import { Post } from '@prisma/client';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
-import { PostQueryRepository } from '@gateway/src/features/post/db/post.query.repository';
 
 jest.setTimeout(15000);
 
@@ -25,7 +24,6 @@ describe('PostController (e2e) test', () => {
   let postTestHelper: PostTestHelper;
   let fileServiceAdapter: FileServiceAdapter;
   const posts: Post[] = [];
-  let postQueryRepo: PostQueryRepository;
 
   const emailAdapterMock = {
     sendEmail: jest.fn(),
@@ -41,8 +39,6 @@ describe('PostController (e2e) test', () => {
 
     fileServiceAdapter =
       testingModule.get<FileServiceAdapter>(FileServiceAdapter);
-
-    postQueryRepo = testingModule.get<PostQueryRepository>(PostQueryRepository);
 
     app = await getAppForE2ETesting(testingModule);
 
@@ -144,10 +140,10 @@ describe('PostController (e2e) test', () => {
 
     it('should get last 4 created posts', async () => {
       const query: PostQueryDto = {
+        sortDirection: 'desc',
+        sortField: 'createdAt',
         skip: 0,
         take: 4,
-        sortField: 'createdAt',
-        sortDirection: 'desc',
       };
 
       jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
@@ -158,13 +154,29 @@ describe('PostController (e2e) test', () => {
           },
         ]) as any,
       );
-      const posts = await postQueryRepo.getPosts(query);
-      console.log(posts);
 
-      expect(posts.isSuccess).toBe(true);
-      //expect(posts.value.length).toBe(4);
-      expect(posts.value[0].id).toBe(post.id);
-      expect(posts.value[0].imagesUrl[0]).toEqual('url');
+      const posts = await postTestHelper.getPosts(query);
+
+      expect(posts.body.length).toBe(4);
+      expect(posts.body[0].id).toBe(post.id);
+      expect(posts.body[0].imagesUrl[0]).toEqual('url');
+    });
+
+    it('should get all created posts with no query parameter', async () => {
+      jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
+        Result.Ok([
+          {
+            ownerId: post.id,
+            url: 'url',
+          },
+        ]) as any,
+      );
+
+      const posts = await postTestHelper.getPosts();
+
+      expect(posts.body.length).toBe(5);
+      expect(posts.body[4].id).toBe(post.id);
+      expect(posts.body[4].imagesUrl[0]).toEqual('url');
     });
 
     it(`${endpoints.deletePost(

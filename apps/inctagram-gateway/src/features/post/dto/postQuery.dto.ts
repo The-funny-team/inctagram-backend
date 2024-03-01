@@ -1,11 +1,11 @@
-import { IsOptional, IsIn, IsInt } from 'class-validator';
+import { IsOptional, IsIn } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PostQueryDto {
   @IsOptional()
   @IsIn(['asc', 'desc'])
   @ApiProperty({ description: 'Sorting direction', default: 'asc' })
-  sortDirection?: string;
+  sortDirection?: string = 'asc';
 
   @IsOptional()
   @IsIn(['createdAt', 'title', 'author'])
@@ -13,15 +13,13 @@ export class PostQueryDto {
     description: 'Sorting item',
     default: ['createdAt', 'updatedAt'],
   })
-  sortField?: string;
+  sortField?: string = 'createdAt';
 
   @IsOptional()
-  @IsInt()
   @ApiProperty({ description: 'Number of items to skip', default: 0 })
-  skip?: number;
+  skip?: number = 0;
 
   @IsOptional()
-  @IsInt()
   @ApiProperty({ description: 'Number of items to take', default: undefined })
-  take?: number;
+  take?: number = undefined;
 }

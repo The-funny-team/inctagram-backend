@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { PostQueryRepository } from '@gateway/src/features/post/db/post.query.repository';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { GetPostsViewSwaggerDecorator } from '@gateway/src/core/swagger/post/getPostsView.swagger.decorator';
@@ -13,7 +13,6 @@ export const endpoints = {
 };
 
 @ApiTags('Public Post')
-@ApiBearerAuth()
 @Controller('public/post')
 export class PublicPostController {
   constructor(private readonly postQueryRepo: PostQueryRepository) {}
@@ -30,6 +29,7 @@ export class PublicPostController {
     if (!posts.isSuccess) {
       throw new NotFoundError(ERROR_POST_NOT_FOUND);
     }
-    return posts;
+
+    return posts.value;
   }
 }
