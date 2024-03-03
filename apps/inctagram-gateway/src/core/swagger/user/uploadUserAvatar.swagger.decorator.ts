@@ -7,12 +7,14 @@ import {
   ApiCreatedResponse,
   ApiBody,
   ApiConsumes,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiErrorResponse } from '../../responses';
 import { NOT_FOUND } from '../swagger.constants';
 
 export function UploadUserAvatarSwaggerDecorator() {
   return applyDecorators(
+    ApiBearerAuth(),
     ApiConsumes('multipart/form-data'),
     ApiBody({
       schema: {

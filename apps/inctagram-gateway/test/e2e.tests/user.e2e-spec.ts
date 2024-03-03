@@ -90,6 +90,39 @@ describe('UserController (e2e) test', () => {
     });
   });
 
+  describe('Get User', () => {
+    it(`${endpoints.getUser()} (GET) - get profile correct data`, async () => {
+      const resTokens = await authTestHelper.login(loginDto, deviceName);
+      const accessToken = resTokens.body.accessToken;
+      const me = await userTestHelper.me(accessToken);
+      const userName = me.body.username;
+      const { body } = await userTestHelper.getUser(userName);
+
+      const expectedBody: ResponseUserDto = {
+        id: expect.any(String),
+        username: newUserData.username,
+        email: newUserData.email,
+        firstName: null,
+        lastName: null,
+        dateOfBirth: null,
+        country: null,
+        city: null,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+        aboutMe: null,
+        avatarUrl: null,
+      };
+
+      expect(body).toEqual(expectedBody);
+    });
+
+    it(`${endpoints.getUser()} (GET) `, async () => {
+      await userTestHelper.getUser('', {
+        expectedCode: HttpStatus.NOT_FOUND,
+      });
+    });
+  });
+
   describe('updateUser', () => {
     it(`${endpoints.updateUser()} (PUT) - update user correct data`, async () => {
       const resTokens = await authTestHelper.login(loginDto, deviceName);
