@@ -35,10 +35,13 @@ export class ResponsePostDto {
   imagesUrl: string[];
 
   static getView(post: Post, imagesData?: FileInfoResponse[]): ResponsePostDto {
-    const imagesDataForPost: FileInfoResponse[] = imagesData.filter(
-      (imageData) => imageData.ownerId === post.id,
-    );
+    let imagesDataForPost: FileInfoResponse[];
 
+    if (imagesData) {
+      imagesDataForPost = imagesData.filter(
+        (imageData) => imageData.ownerId === post.id,
+      );
+    }
     return {
       id: post.id,
       description: post.description,

@@ -17,6 +17,14 @@ import { DeleteFileCommand, UploadFileCommand } from './application';
 import { FilesService } from './files.service';
 import { DeleteFilesCommand } from '@fileService/src/files/application/use-cases/deleteFiles.usecase';
 import { FilesDeleteRequest } from '@libs/contracts/user/avatar/filesDeleteRequest.dto';
+import {
+  DELETE_FILE,
+  DELETE_FILES,
+  GET_FILE_URL,
+  GET_FILES_INFO,
+  UPDATE_OWNER_ID_FILE,
+  UPLOAD_FILE,
+} from '@libs/constants/microservice.constant';
 
 @Controller('files')
 export class FilesController {
@@ -25,21 +33,21 @@ export class FilesController {
     private readonly filesService: FilesService,
   ) {}
 
-  @MessagePattern({ cmd: 'upload_file' })
+  @MessagePattern({ cmd: UPLOAD_FILE })
   async uploadFile(payload: FileUploadRequest): Promise<FileUploadResponse> {
     return this.commandBus.execute<UploadFileCommand, FileUploadResponse>(
       new UploadFileCommand(payload),
     );
   }
 
-  @MessagePattern({ cmd: 'delete_file' })
+  @MessagePattern({ cmd: DELETE_FILE })
   async deleteFile({ fileId }: FileDeleteRequest): Promise<FileDeleteResponse> {
     return this.commandBus.execute<DeleteFileCommand, FileDeleteResponse>(
       new DeleteFileCommand(fileId),
     );
   }
 
-  @MessagePattern({ cmd: 'delete_files' })
+  @MessagePattern({ cmd: DELETE_FILES })
   async deleteFiles({
     fileIds,
   }: FilesDeleteRequest): Promise<FileDeleteResponse> {
@@ -48,17 +56,17 @@ export class FilesController {
     );
   }
 
-  @MessagePattern({ cmd: 'get_file_url' })
+  @MessagePattern({ cmd: GET_FILE_URL })
   async getFileInfo({ fileId }: FileUrlRequest): Promise<FileUrlResponse> {
     return this.filesService.getFileUrl(fileId);
   }
 
-  @MessagePattern({ cmd: 'get_files_info' })
+  @MessagePattern({ cmd: GET_FILES_INFO })
   async getFilesInfo({ ids }: FilesUrlRequest): Promise<FileInfoResponse[]> {
     return this.filesService.getFilesInfo(ids);
   }
 
-  @MessagePattern({ cmd: 'update_owner_id_file' })
+  @MessagePattern({ cmd: UPDATE_OWNER_ID_FILE })
   async updateOwnerIdFile(
     updateDto: FileUpdateOwnerIdRequest,
   ): Promise<FileUpdateOwnerIdResponse> {

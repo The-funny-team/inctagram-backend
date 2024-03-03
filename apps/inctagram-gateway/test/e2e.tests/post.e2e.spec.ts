@@ -12,9 +12,10 @@ import {
 import { LoginDto } from '@gateway/src/features/auth/dto/login.dto';
 import { endpoints } from '@gateway/src/features/post/api/post.controller';
 import { PostTestHelper } from '@gateway/test/e2e.tests/testHelpers/post.test.helper';
-import { FileServiceAdapter, Result } from '@gateway/src/core';
+import { BadGatewayError, FileServiceAdapter, Result } from '@gateway/src/core';
 import { Post } from '@prisma/client';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
+import { ERROR_GET_URLS_FILES } from '@gateway/src/core/adapters/fileService/fileService.constants';
 
 jest.setTimeout(15000);
 
@@ -177,6 +178,27 @@ describe('PostController (e2e) test', () => {
       expect(posts.body.length).toBe(5);
       expect(posts.body[4].id).toBe(post.id);
       expect(posts.body[4].imagesUrl[0]).toEqual('url');
+    });
+
+    it('should get last 4 created posts without image data', async () => {
+      const query: PostQueryDto = {
+        sortDirection: 'desc',
+        sortField: 'createdAt',
+        skip: 0,
+        take: 4,
+      };
+
+      jest
+        .spyOn(fileServiceAdapter, 'getFilesInfo')
+        .mockReturnValueOnce(
+          Result.Err(new BadGatewayError(ERROR_GET_URLS_FILES)) as any,
+        );
+
+      const posts = await postTestHelper.getPosts(query);
+
+      expect(posts.body.length).toBe(4);
+      expect(posts.body[0].id).toBe(post.id);
+      expect(posts.body[0].imagesUrl).toEqual([]);
     });
 
     it(`${endpoints.deletePost(
