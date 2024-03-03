@@ -71,7 +71,6 @@ export class PostQueryRepository {
 
     if (!imagesData.isSuccess) {
       mappedPostsView = posts.map((post) => ResponsePostDto.getView(post));
-      return Result.Ok(mappedPostsView);
     }
 
     mappedPostsView = posts.map((post) =>
