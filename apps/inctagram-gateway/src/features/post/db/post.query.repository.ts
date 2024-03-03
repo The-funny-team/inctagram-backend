@@ -5,7 +5,8 @@ import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePo
 import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { FileInfoResponse } from '@libs/contracts';
-import { WhereClause } from '@gateway/src/features/post/types/whereClause.type';
+import { PostsWhereClause } from '@gateway/src/features/post/types/postsWhereClause.type';
+import { PostWhereClause } from '@gateway/src/features/post/types/postWhereClause.type';
 
 @Injectable()
 export class PostQueryRepository {
@@ -18,10 +19,16 @@ export class PostQueryRepository {
 
   async getPostViewById(
     id: string,
-    userId: string,
+    userId?: string,
   ): Promise<Result<ResponsePostDto>> {
+    const whereClause: PostWhereClause = { id, isDeleted: false };
+
+    if (userId) {
+      whereClause.authorId = userId;
+    }
+
     const post = await this.prismaService.post.findUnique({
-      where: { id, isDeleted: false, authorId: userId },
+      where: whereClause,
       include: { images: true },
     });
 
@@ -42,7 +49,7 @@ export class PostQueryRepository {
     query?: PostQueryDto,
     userId?: string,
   ): Promise<Result<ResponsePostDto[]>> {
-    const whereClause: WhereClause = { isDeleted: false };
+    const whereClause: PostsWhereClause = { isDeleted: false };
 
     if (userId) {
       whereClause.authorId = userId;

@@ -1,10 +1,12 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PostQueryRepository } from '@gateway/src/features/post/db/post.query.repository';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { GetPostsViewSwaggerDecorator } from '@gateway/src/core/swagger/post/getPostsView.swagger.decorator';
 import { NotFoundError } from '@gateway/src/core';
 import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
+import { GetPostViewSwaggerDecorator } from '@gateway/src/core/swagger/post/getPostView.swagger.decorator';
+import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePost.dto';
 
 const baseUrl = '/public/post';
 
@@ -31,5 +33,20 @@ export class PublicPostController {
     }
 
     return posts.value;
+  }
+
+  @GetPostViewSwaggerDecorator()
+  @Get(':id')
+  async getPost(@Param('id') postId: string): Promise<ResponsePostDto> {
+    return this.getPostView(postId);
+  }
+
+  private async getPostView(postId: string): Promise<ResponsePostDto> {
+    const postViewResult = await this.postQueryRepo.getPostViewById(postId);
+
+    if (!postViewResult.isSuccess) {
+      throw postViewResult.err;
+    }
+    return postViewResult.value;
   }
 }
