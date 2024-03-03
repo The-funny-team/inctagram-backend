@@ -139,6 +139,18 @@ describe('PostController (e2e) test', () => {
       post = posts[4];
     });
 
+    it('should get post by id', async () => {
+      jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
+        Result.Ok([
+          {
+            ownerId: post.id,
+            url: 'url',
+          },
+        ]) as any,
+      );
+      await postTestHelper.getPostById(post.id);
+    });
+
     it('should get last 4 created posts', async () => {
       const query: PostQueryDto = {
         sortDirection: 'desc',
