@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { v4 as uuidv4 } from 'uuid';
 import { Post } from '@prisma/client';
+import { FileInfoResponse } from '@libs/contracts';
 
 export class ResponsePostDto {
   @ApiProperty({
@@ -33,14 +34,23 @@ export class ResponsePostDto {
   @ApiProperty({ description: 'image id', type: 'string' })
   imagesUrl: string[];
 
-  static getView(post: Post, imagesUrl?: string[]): ResponsePostDto {
+  static getView(post: Post, imagesData?: FileInfoResponse[]): ResponsePostDto {
+    let imagesDataForPost: FileInfoResponse[];
+
+    if (imagesData) {
+      imagesDataForPost = imagesData.filter(
+        (imageData) => imageData.ownerId === post.id,
+      );
+    }
     return {
       id: post.id,
       description: post.description,
       authorId: post.authorId,
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
-      imagesUrl: imagesUrl ? imagesUrl : null,
+      imagesUrl: imagesDataForPost
+        ? imagesDataForPost.map((imageData) => imageData.url)
+        : [],
     };
   }
 }

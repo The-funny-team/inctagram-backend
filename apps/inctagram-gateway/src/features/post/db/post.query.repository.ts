@@ -3,6 +3,9 @@ import { PrismaService } from '../../../core/prisma/prisma.servise';
 import { FileServiceAdapter, NotFoundError, Result } from '../../../core';
 import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePost.dto';
 import { ERROR_POST_NOT_FOUND } from '@gateway/src/features/post/post.constants';
+import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
+import { FileInfoResponse } from '@libs/contracts';
+import { WhereClause } from '@gateway/src/features/post/types/whereClause.type';
 
 @Injectable()
 export class PostQueryRepository {
@@ -32,7 +35,48 @@ export class PostQueryRepository {
     if (!result.isSuccess) {
       return Result.Ok(ResponsePostDto.getView(post));
     }
+    return Result.Ok(ResponsePostDto.getView(post, result.value));
+  }
 
-    return Result.Ok(ResponsePostDto.getView(post, result.value.urls));
+  async getPosts(
+    query?: PostQueryDto,
+    userId?: string,
+  ): Promise<Result<ResponsePostDto[]>> {
+    const whereClause: WhereClause = { isDeleted: false };
+
+    if (userId) {
+      whereClause.authorId = userId;
+    }
+
+    const posts = await this.prismaService.post.findMany({
+      where: whereClause,
+      orderBy: { [query.sortField]: query.sortDirection },
+      skip: Number(query.skip),
+      take: Number(query.take) || undefined,
+      include: { images: true },
+    });
+
+    if (!posts.length) {
+      return Result.Err(new NotFoundError(ERROR_POST_NOT_FOUND));
+    }
+
+    const imageIds = posts.flatMap((post) =>
+      post.images.map((image) => image.imageId),
+    );
+
+    const imagesData: Result<FileInfoResponse[]> =
+      await this.fileServiceAdapter.getFilesInfo(imageIds);
+
+    let mappedPostsView: ResponsePostDto[];
+
+    if (!imagesData.isSuccess) {
+      mappedPostsView = posts.map((post) => ResponsePostDto.getView(post));
+    }
+
+    mappedPostsView = posts.map((post) =>
+      ResponsePostDto.getView(post, imagesData.value),
+    );
+
+    return Result.Ok(mappedPostsView);
   }
 }

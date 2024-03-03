@@ -7,4 +7,4 @@ export * from './user/file/fileUrlResponse.dto';
 export * from './user/file/fileUpdateOwnerIdRequest.dto';
 export * from './user/file/fileUpdateOwnerIdResponse.dto';
 export * from './user/file/filesUrlRequest.dto';
-export * from './user/file/filesUrlResponse.dto';
+export * from './user/file/filesInfoResponse.dto';
