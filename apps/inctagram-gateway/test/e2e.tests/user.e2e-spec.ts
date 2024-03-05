@@ -116,7 +116,7 @@ describe('UserController (e2e) test', () => {
       expect(body).toEqual(expectedBody);
     });
 
-    it(`${endpoints.getUser()} (GET) `, async () => {
+    it(`${endpoints.getUser()} (GET) Should not get profile with incorrect data`, async () => {
       await userTestHelper.getUser('', {
         expectedCode: HttpStatus.NOT_FOUND,
       });
