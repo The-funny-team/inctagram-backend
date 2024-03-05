@@ -16,9 +16,14 @@ export class UserQueryRepository {
     @Inject('FILE_SERVICE') private readonly fileServiceClient: ClientProxy,
   ) {}
 
-  async getUserViewById(id: string): Promise<Result<ResponseUserDto>> {
-    const user = await this.prismaService.user.findUnique({
-      where: { id, isDeleted: false },
+  async getUserView(nameOrId: string): Promise<Result<ResponseUserDto>> {
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        OR: [
+          { id: nameOrId, isDeleted: false },
+          { name: nameOrId, isDeleted: false },
+        ],
+      },
     });
     if (!user) {
       return Result.Err(new NotFoundError(USER_NOT_FOUND));
@@ -37,7 +42,7 @@ export class UserQueryRepository {
       );
       return Result.Ok(ResponseUserDto.getView(user, avatarUrl.url));
     } catch (error) {
-      this.logger.log(`userId: ${id} - ${error}`);
+      this.logger.log(`userName or id: ${nameOrId} - ${error}`);
       return Result.Ok(ResponseUserDto.getView(user));
     }
   }

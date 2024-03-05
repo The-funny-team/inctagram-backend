@@ -8,6 +8,7 @@ import { endpoints } from '@gateway/src/features/user/api/user.controller';
 
 export class UserTestHelper {
   globalPrefix = getGlobalPrefix();
+
   constructor(private app: INestApplication) {}
 
   async createRegisteredAndVerifiedUser(
@@ -40,6 +41,18 @@ export class UserTestHelper {
     return request(this.app.getHttpServer())
       .get(this.globalPrefix + endpoints.me())
       .set('Authorization', `Bearer ${accessToken}`)
+      .expect(expectedCode);
+  }
+
+  async getUser(
+    userName: string,
+    config: {
+      expectedCode?: number;
+    } = {},
+  ) {
+    const expectedCode = config.expectedCode ?? HttpStatus.OK;
+    return request(this.app.getHttpServer())
+      .get(this.globalPrefix + endpoints.getUser() + `/${userName}`)
       .expect(expectedCode);
   }
 
