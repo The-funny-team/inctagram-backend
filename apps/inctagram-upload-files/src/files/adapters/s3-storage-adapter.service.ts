@@ -2,13 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   DeleteObjectCommand,
   DeleteObjectsCommand,
-  PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { FileUploadRequest } from '@libs/contracts';
 import { AmazonCloudBacketConfig } from '../config/yandex-cloud-backet.configuration';
 import { FileSaveResponse } from '../types/fileSave.response';
 import { v4 as uuidv4 } from 'uuid';
+import { Upload } from '@aws-sdk/lib-storage';
+import { Readable } from 'stream';
 
 @Injectable()
 export class S3StorageAdapter {
@@ -40,19 +41,31 @@ export class S3StorageAdapter {
     fileType,
   }: FileUploadRequest): Promise<FileSaveResponse> {
     const key = `content/${userId}/${fileType}/${uuidv4()}.${format}`;
+
+    const bufferStream = new Readable();
+    bufferStream.push(buffer.buffer);
+    bufferStream.push(null); // End the stream
     const bucketParams = {
       Bucket: this.bucketName,
       Key: key,
-      Body: buffer,
+      Body: bufferStream,
       ContentType: `image/${format}`,
     };
 
-    const command = new PutObjectCommand(bucketParams);
     try {
-      const uploadResult = await this.s3Client.send(command);
+      const upload = new Upload({
+        params: bucketParams,
+        client: this.s3Client,
+      });
+
+      upload.on('httpUploadProgress', (progress) => {
+        console.log(progress);
+      });
+
+      const result = await upload.done();
       return {
         url: key,
-        fileId: uploadResult.ETag,
+        fileId: result.ETag,
       };
     } catch (exception) {
       this.logger.error(exception);
