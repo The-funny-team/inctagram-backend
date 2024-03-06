@@ -62,4 +62,12 @@ export class PostTestHelper {
       .send()
       .expect(expectedCode);
   }
+  async getPostById(id, config: { expectedCode?: number } = {}) {
+    const expectedCode = config.expectedCode ?? HttpStatus.OK;
+
+    return request(this.app.getHttpServer())
+      .get(this.globalPrefix + `/public/post/${id}`)
+      .send()
+      .expect(expectedCode);
+  }
 }

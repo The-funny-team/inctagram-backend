@@ -1,4 +1,5 @@
-export type WhereClause = {
+export type PostWhereClause = {
+  id: string;
   isDeleted: boolean;
   authorId?: string;
 };

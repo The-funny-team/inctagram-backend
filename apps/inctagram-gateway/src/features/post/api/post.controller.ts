@@ -126,6 +126,7 @@ export class PostController {
   }
 
   @GetPostViewSwaggerDecorator()
+  @ApiUnauthorizedResponse({ type: ApiErrorResponse })
   @Get(':id')
   async getPost(
     @Param('id') postId: string,
