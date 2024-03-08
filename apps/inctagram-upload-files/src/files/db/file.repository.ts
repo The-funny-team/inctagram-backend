@@ -35,6 +35,9 @@ export class FileRepository {
   }
 
   async updateOwnerId(ids: string[], ownerId: string) {
-    this.fileModel.updateMany({ _id: { $in: ids } }, { set$: { ownerId } });
+    return this.fileModel.updateMany(
+      { _id: { $in: ids } },
+      { $set: { ownerId } },
+    );
   }
 }
