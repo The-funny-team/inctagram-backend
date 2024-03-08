@@ -32,8 +32,8 @@ export class FilesService {
     ids,
     ownerId,
   }: FileUpdateOwnerIdRequest): Promise<FileUpdateOwnerIdResponse> {
-    await this.fileRepo.updateOwnerId(ids, ownerId);
-    return { isSuccess: true };
+    const isUpdated = await this.fileRepo.updateOwnerId(ids, ownerId);
+    return { isSuccess: !!isUpdated.acknowledged };
   }
 
   async getFilesInfo(ids: string[]): Promise<FileInfoResponse[]> {
