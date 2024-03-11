@@ -2,14 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   DeleteObjectCommand,
   DeleteObjectsCommand,
+  PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { FileUploadRequest } from '@libs/contracts';
 import { AmazonCloudBacketConfig } from '../config/yandex-cloud-backet.configuration';
 import { FileSaveResponse } from '../types/fileSave.response';
 import { v4 as uuidv4 } from 'uuid';
-import { Upload } from '@aws-sdk/lib-storage';
-import { Readable } from 'stream';
 
 @Injectable()
 export class S3StorageAdapter {
@@ -42,30 +41,21 @@ export class S3StorageAdapter {
   }: FileUploadRequest): Promise<FileSaveResponse> {
     const key = `content/${userId}/${fileType}/${uuidv4()}.${format}`;
 
-    const bufferStream = new Readable();
-    bufferStream.push(buffer.buffer);
-    bufferStream.push(null); // End the stream
+    const extractedBuffer = Buffer.from(buffer);
+
     const bucketParams = {
       Bucket: this.bucketName,
       Key: key,
-      Body: bufferStream,
+      Body: extractedBuffer,
       ContentType: `image/${format}`,
     };
 
+    const command = new PutObjectCommand(bucketParams);
     try {
-      const upload = new Upload({
-        params: bucketParams,
-        client: this.s3Client,
-      });
-
-      upload.on('httpUploadProgress', (progress) => {
-        console.log(progress);
-      });
-
-      const result = await upload.done();
+      const uploadResult = await this.s3Client.send(command);
       return {
         url: key,
-        fileId: result.ETag,
+        fileId: uploadResult.ETag,
       };
     } catch (exception) {
       this.logger.error(exception);
@@ -76,10 +66,7 @@ export class S3StorageAdapter {
   async deleteAvatar(key: string) {
     const bucketParams = { Bucket: this.bucketName, Key: key };
     try {
-      const data = await this.s3Client.send(
-        new DeleteObjectCommand(bucketParams),
-      );
-      return data;
+      return await this.s3Client.send(new DeleteObjectCommand(bucketParams));
     } catch (exception) {
       this.logger.error(exception);
       throw exception;

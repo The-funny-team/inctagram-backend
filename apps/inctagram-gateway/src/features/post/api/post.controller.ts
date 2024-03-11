@@ -99,14 +99,14 @@ export class PostController {
       buffer: image.buffer,
     };
 
-    const downloadResult = await this.commandBus.execute<
+    const uploadResult = await this.commandBus.execute<
       UploadImagePostCommand,
       Result<FileUploadResponse>
     >(new UploadImagePostCommand(imadeDto));
-    if (!downloadResult.isSuccess) {
-      throw downloadResult.err;
+    if (!uploadResult.isSuccess) {
+      throw uploadResult.err;
     }
-    return downloadResult.value;
+    return uploadResult.value;
   }
 
   @CreatePostSwaggerDecorator()
