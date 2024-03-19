@@ -1,5 +1,5 @@
 # Check out https://hub.docker.com/_/node to select a new base image
-FROM node:20.11-alpine
+FROM node:18.15
 ARG port
 ARG service
 ENV SERVICE=$service
@@ -20,16 +20,17 @@ WORKDIR /home/node/dist/${SERVICE}
 
 
 COPY --chown=node package*.json ./
+COPY --chown=node yarn.lock ./
 
-RUN npm run install
+RUN yarn install
 
 # Bundle app source code
 COPY --chown=node . .
 
-RUN npm run build:${SERVICE}
+RUN yarn build:${SERVICE}
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 
 EXPOSE ${PORT}
 
-CMD npm run 'start:inctagram-gateway'
+CMD yarn 'start:inctagram-gateway'
