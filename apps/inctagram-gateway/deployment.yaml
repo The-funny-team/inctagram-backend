@@ -77,16 +77,6 @@ spec:
                  secretKeyRef:
                    name: ft-inctagram-gateway-production-config-secret
                    key: GOOGLE_OAUTH_CLIENT_SECRET
-             - name: FRONTEND_EMAIL_CONFIRMATION_URL
-               valueFrom:
-                 secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
-                   key: FRONTEND_EMAIL_CONFIRMATION_URL
-             - name: FRONTEND_EMAIL_CONFIRMATION_PASSWORD_RECOVERY_URL
-               valueFrom:
-                 secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
-                   key: FRONTEND_EMAIL_CONFIRMATION_PASSWORD_RECOVERY_URL
              - name: DATABASE_URL
                valueFrom:
                  secretKeyRef:
