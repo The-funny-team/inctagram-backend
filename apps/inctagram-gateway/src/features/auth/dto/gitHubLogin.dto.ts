@@ -7,7 +7,6 @@ export class GitHubLoginDto {
     type: 'string',
     example: '',
   })
-  @IsUUID()
   @IsNotEmpty()
   code: string;
 }

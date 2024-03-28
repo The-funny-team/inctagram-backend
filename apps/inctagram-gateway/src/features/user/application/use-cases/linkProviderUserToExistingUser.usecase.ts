@@ -22,7 +22,11 @@ export class LinkProviderUserToExistingUserUseCase
     provider,
     userData,
   }: LinkProviderUserToExistingUserCommand): Promise<Result<string>> {
-    let userByEmail = await this.userRepo.findByUsernameOrEmail(userData.email);
+    let userByEmail;
+
+    if (userData.email) {
+      userByEmail = await this.userRepo.findByUsernameOrEmail(userData.email);
+    }
 
     if (!userByEmail) {
       userByEmail = await this.userRepo.findByUsernameOrEmail(userData.name);

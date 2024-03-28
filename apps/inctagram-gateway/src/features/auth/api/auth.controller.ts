@@ -19,7 +19,12 @@ import {
   UserPasswordRecoveryDto,
 } from '../../user/dto';
 import { UserFacade } from '../../user/user.facade';
-import { ConfirmationCodeDto, GoogleLoginDto, LoginProviderDto } from '../dto';
+import {
+  ConfirmationCodeDto,
+  GitHubLoginDto,
+  GoogleLoginDto,
+  LoginProviderDto,
+} from '../dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -276,11 +281,39 @@ export class AuthController {
     return new ResponseAccessTokenDto(accessToken);
   }
 
-  // @Get('github')
-  // async gintHubLogin(
-  //   @Query() { code }: GitHubLoginDto,
-  //   @Ip() ip: string,
-  //   @Headers('user-agent') title: string,
-  //   @Res({ passthrough: true }) response: Response,
-  // ): Promise<ResponseAccessTokenDto> {}
+  @ApiOkResponse({ type: ResponseAccessTokenDto })
+  @ApiUnauthorizedResponse()
+  @ApiForbiddenResponse()
+  @Get('github')
+  @ApiOperation({
+    summary: 'Oauth2 github authorization',
+  })
+  @Get('github')
+  async githubLogin(
+    @Query() { code }: GitHubLoginDto,
+    @Ip() ip: string,
+    @UserAgent() title: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<ResponseAccessTokenDto> {
+    const providerDto: LoginProviderDto = {
+      code,
+      ip,
+      title,
+    };
+
+    const result = await this.authService.githubLogin(providerDto);
+
+    if (!result.isSuccess) {
+      throw result.err;
+    }
+
+    const { accessToken, refreshToken } = result.value;
+
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return new ResponseAccessTokenDto(accessToken);
+  }
 }

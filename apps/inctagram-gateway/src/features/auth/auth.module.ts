@@ -9,6 +9,7 @@ import { AUTH_USE_CASES } from './application';
 import { GoogleOauth2Config } from '../device/config';
 import { HttpModule } from '@nestjs/axios';
 import { CqrsModule } from '@nestjs/cqrs';
+import { GitHubOauth2Config } from '@gateway/src/features/device/config/githubOauth2.config';
 
 @Module({
   imports: [CqrsModule, UserModule, DeviceModule, JWTModule, HttpModule],
@@ -18,6 +19,7 @@ import { CqrsModule } from '@nestjs/cqrs';
     ...AUTH_USE_CASES,
     AuthService,
     GoogleOauth2Config,
+    GitHubOauth2Config,
   ],
 })
 export class AuthModule {}
