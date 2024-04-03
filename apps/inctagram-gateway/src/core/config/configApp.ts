@@ -12,7 +12,7 @@ export function configApp(app: INestApplication) {
   app.use(cookieParser());
   app.enableCors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://ft-inctagram.site/'],
+    origin: ['http://localhost:3000', 'https://funny-inctagram.site/'],
     methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
     allowedHeaders: ['Accept', 'Content-Type', 'Authorization'],
   });
