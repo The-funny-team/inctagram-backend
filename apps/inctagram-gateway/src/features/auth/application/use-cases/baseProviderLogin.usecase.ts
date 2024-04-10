@@ -11,7 +11,7 @@ export abstract class BaseProvideLoginUseCase {
 
   protected constructor(
     private readonly userFacade: UserFacade,
-    private readonly deviceFasade: DeviceFacade,
+    private readonly deviceFacade: DeviceFacade,
   ) {}
 
   abstract getProviderUser(code: string): Promise<Result<ProviderUserResponse>>;
@@ -54,7 +54,7 @@ export abstract class BaseProvideLoginUseCase {
   }
 
   private async loginUser(userId: string, providerDto: LoginProviderDto) {
-    return this.deviceFasade.useCases.createDevice({
+    return this.deviceFacade.useCases.createDevice({
       ip: providerDto.ip,
       title: providerDto.title,
       userId: userId,

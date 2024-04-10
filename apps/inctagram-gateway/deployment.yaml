@@ -77,6 +77,11 @@ spec:
                  secretKeyRef:
                    name: ft-inctagram-gateway-production-config-secret
                    key: GOOGLE_OAUTH_CLIENT_SECRET
+             - name: PORT
+               valueFrom:
+                 secretKeyRef:
+                   name: ft-inctagram-gateway-production-config-secret
+                   key: PORT
              - name: DATABASE_URL
                valueFrom:
                  secretKeyRef:
