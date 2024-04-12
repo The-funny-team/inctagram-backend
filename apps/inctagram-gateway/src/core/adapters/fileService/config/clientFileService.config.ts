@@ -9,7 +9,7 @@ export const getClientFileServiceConfig = (): ClientsProviderAsyncOptions => {
         host:
           configService.get('FILE_SERVICE_HOST') ||
           'ft-inctagram-upload-files-service',
-        port: Number(configService.get('FILE_SERVICE_PORT')) || 3260,
+        port: Number(configService.get('FILE_SERVICE_PORT')) || 3296,
       },
     }),
     inject: [ConfigService],
