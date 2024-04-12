@@ -43,6 +43,8 @@ export class S3StorageAdapter {
 
     const extractedBuffer = Buffer.from(buffer);
 
+    console.log('extractedBuffer', extractedBuffer);
+
     const bucketParams = {
       Bucket: this.bucketName,
       Key: key,
