@@ -79,7 +79,6 @@ export class AuthController {
   @ApiBadRequestResponse({ type: BadRequestResponse })
   @Post('registration')
   async createUser(@Body() userDto: CreateUserDto): Promise<ResponseUserDto> {
-    console.log('Enter createUser in auth controller');
     const resultCreated = await this.userFacade.useCases.createUser(userDto);
 
     if (!resultCreated.isSuccess) {
@@ -90,7 +89,6 @@ export class AuthController {
       resultCreated.value.id,
     );
 
-    console.log('resultView', resultView);
     if (!resultView.isSuccess) {
       throw resultCreated.err;
     }
