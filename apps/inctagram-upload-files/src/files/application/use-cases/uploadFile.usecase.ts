@@ -17,8 +17,10 @@ export class UploadFileUseCase implements ICommandHandler<UploadFileCommand> {
   ) {}
 
   async execute({ payload }: UploadFileCommand): Promise<FileUploadResponse> {
+    console.log('entered', UploadFileUseCase);
     const downloadFile = await this.fileStorageAdapter.saveAvatar(payload);
 
+    console.log('downloadFile', downloadFile);
     // TODO добавить проверку валидации полей payload
 
     const fileDto: IFile = {
@@ -32,6 +34,8 @@ export class UploadFileUseCase implements ICommandHandler<UploadFileCommand> {
 
     const fileEntity = new FileEntity(fileDto);
     const file = await this.fileRepo.createFile(fileEntity);
+
+    console.log('file', file);
 
     return { fileId: file._id };
   }

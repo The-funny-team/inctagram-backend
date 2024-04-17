@@ -1,8 +1,8 @@
 import {
   FileDeleteResponse,
+  FileInfoResponse,
   FileUploadRequest,
   FileUploadResponse,
-  FilesUrlResponse,
 } from '@libs/contracts';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -15,6 +15,13 @@ import {
   ERROR_UPDATE_OWNWER_ID_FILE,
   ERROR_UPLOAD_FILE,
 } from './fileService.constants';
+import {
+  DELETE_FILE,
+  DELETE_FILES,
+  GET_FILES_INFO,
+  UPDATE_OWNER_ID_FILE,
+  UPLOAD_FILE,
+} from '@libs/constants/microservice.constant';
 
 @Injectable()
 export class FileServiceAdapter {
@@ -29,7 +36,7 @@ export class FileServiceAdapter {
   ): Promise<Result<FileUploadResponse>> {
     try {
       const responseOfService = this.fileServiceClient
-        .send({ cmd: 'upload_file' }, payload)
+        .send({ cmd: UPLOAD_FILE }, payload)
         .pipe(timeout(10000));
 
       const resultResponse: FileUploadResponse = await firstValueFrom(
@@ -45,7 +52,7 @@ export class FileServiceAdapter {
   async delete(fileId: string): Promise<Result<FileDeleteResponse>> {
     try {
       const responseOfService = this.fileServiceClient
-        .send({ cmd: 'delete_file' }, { fileId })
+        .send({ cmd: DELETE_FILE }, { fileId })
         .pipe(timeout(10000));
       const deletionResult = await firstValueFrom(responseOfService);
       return Result.Ok<FileDeleteResponse>(deletionResult);
@@ -57,7 +64,7 @@ export class FileServiceAdapter {
   async deleteFiles(fileIds: string[]): Promise<Result<FileDeleteResponse>> {
     try {
       const responseOfService = this.fileServiceClient
-        .send({ cmd: 'delete_files' }, { fileIds })
+        .send({ cmd: DELETE_FILES }, { fileIds })
         .pipe(timeout(10000));
       const deletionResult = await firstValueFrom(responseOfService);
       return Result.Ok<FileDeleteResponse>(deletionResult);
@@ -70,7 +77,7 @@ export class FileServiceAdapter {
   async updateOwnerId(ids: string[], ownerId: string): Promise<Result> {
     try {
       const responseOfService = this.fileServiceClient
-        .send({ cmd: 'update_owner_id_file' }, { ids, ownerId })
+        .send({ cmd: UPDATE_OWNER_ID_FILE }, { ids, ownerId })
         .pipe(timeout(10000));
 
       const updateResult = await firstValueFrom(responseOfService);
@@ -85,12 +92,12 @@ export class FileServiceAdapter {
     }
   }
 
-  async getFilesInfo(ids: string[]): Promise<Result<FilesUrlResponse>> {
+  async getFilesInfo(ids: string[]): Promise<Result<FileInfoResponse[]>> {
     try {
       const responseOfService = this.fileServiceClient
-        .send({ cmd: 'get_files_url' }, { ids })
+        .send({ cmd: GET_FILES_INFO }, { ids })
         .pipe(timeout(10000));
-      const response: FilesUrlResponse = await firstValueFrom(
+      const response: FileInfoResponse[] = await firstValueFrom(
         responseOfService,
       );
 

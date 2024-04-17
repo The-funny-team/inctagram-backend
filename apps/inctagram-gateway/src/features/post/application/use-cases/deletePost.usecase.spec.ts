@@ -100,17 +100,13 @@ describe('DeletePostUseCase', () => {
         .spyOn(postRepo, 'findById')
         .mockReturnValueOnce(mockPost as any);
 
-      const mockedFileServiceCleint = jest
+      jest
         .spyOn(prismaService, '$transaction')
         .mockReturnValueOnce(fileServiceClient);
-
-      console.log(mockedFileServiceCleint);
 
       const deleteResult = await useCase.execute(
         new DeletePostCommand(mockPost.id, mockUser.id),
       );
-
-      console.log('deleteResult', deleteResult);
 
       const findPosResponse = findPostById.mock.results[0].value;
       expect(postRepo.findById).toHaveBeenCalled();

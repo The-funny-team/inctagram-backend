@@ -22,33 +22,33 @@ spec:
              - containerPort: PORT_CONTAINER
 
            env:
-             - name: YANDEX_CLOUD_KEY_ID
+             - name: AMAZON_CLOUD_KEY_ID
                valueFrom:
                  secretKeyRef:
                    name: ft-inctagram-upload-files-production-config-secret
-                   key: YANDEX_CLOUD_KEY_ID
-             - name: YANDEX_CLOUD_SECRET_KEY
+                   key: AMAZON_CLOUD_KEY_ID
+             - name: AMAZON_CLOUD_SECRET_KEY
                valueFrom:
                  secretKeyRef:
                    name: ft-inctagram-upload-files-production-config-secret
-                   key: YANDEX_CLOUD_SECRET_KEY
-             - name: YANDEX_CLOUD_URL
+                   key: AMAZON_CLOUD_SECRET_KEY
+             - name: AMAZON_CLOUD_URL
                valueFrom:
                  secretKeyRef:
                    name: ft-inctagram-upload-files-production-config-secret
-                   key: YANDEX_CLOUD_URL
-             - name: YANDEX_CLOUD_URL_FILES
+                   key: AMAZON_CLOUD_URL
+             - name: AMAZON_CLOUD_URL_FILES
                valueFrom:
                  secretKeyRef:
                    name: ft-inctagram-upload-files-production-config-secret
-                   key: YANDEX_CLOUD_URL_FILES
+                   key: AMAZON_CLOUD_URL_FILES
              - name: MONGO_URI
                valueFrom:
                  secretKeyRef:
                    name: ft-inctagram-upload-files-production-config-secret
                    key: MONGO_URI
-             - name: YANDEX_CLOUD_BUCKET_NAME
+             - name: AMAZON_CLOUD_BUCKET_NAME
                valueFrom:
                  secretKeyRef:
                    name: ft-inctagram-upload-files-production-config-secret
-                   key: YANDEX_CLOUD_BUCKET_NAME
+                   key: AMAZON_CLOUD_BUCKET_NAME

@@ -41,3 +41,5 @@ lerna-debug.log*
 .env
 .gateway.development.env
 .upload.files.development.env
+
+.history

@@ -110,7 +110,7 @@ export class UserFacade {
   }
 
   private async getUserViewById(id: string): Promise<Result<ResponseUserDto>> {
-    return this.userQueryRepo.getUserViewById(id);
+    return this.userQueryRepo.getUserView(id);
   }
 
   private async findUserProviderByProviderId(

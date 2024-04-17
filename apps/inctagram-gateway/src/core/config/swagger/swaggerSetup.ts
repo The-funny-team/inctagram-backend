@@ -11,6 +11,7 @@ export function swaggerSetup(app: INestApplication) {
     .addTag('Intagram')
     .addBearerAuth()
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`${APP_GLOBAL_PREFIX}/doc`, app, document);
 }

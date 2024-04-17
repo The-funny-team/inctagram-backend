@@ -3,9 +3,9 @@ pipeline {
     agent any
     environment {
         ENV_TYPE = "production"
-        PORT = 3259
-        NAMESPACE = "ft-inctagram-site"
-        REGISTRY_HOSTNAME = "vladnen97"
+        PORT = 3294
+        NAMESPACE = "funny-inctagram-site"
+        REGISTRY_HOSTNAME = "funnyteam"
         PROJECT = "ft-inctagram-gateway"
         SERVICE="inctagram-gateway"
         REGISTRY = "registry.hub.docker.com"
@@ -24,14 +24,14 @@ pipeline {
             steps {
                 script {
                     sh "yarn install"
-                    sh "yarn test"
+                    sh "yarn run test"
                 }
             }
         }
         stage('e2e tests') {
             steps {
                 script {
-                    sh "yarn test:e2e"
+                    sh "yarn run test:e2e"
                 }
             }
         }
@@ -48,7 +48,7 @@ pipeline {
              steps {
                  echo "Push image started..."
                      script {
-                        docker.withRegistry("https://${env.REGISTRY}", 'ft-inctagram-site') {
+                        docker.withRegistry("https://${env.REGISTRY}", 'funny-inctagram-site') {
                             app.push("${env.IMAGE_NAME}")
                         }
                      }

@@ -3,6 +3,7 @@ import request from 'supertest';
 import { getGlobalPrefix, randomString } from '../utils/tests.utils';
 import { CreatePostDto } from '@gateway/src/features/post/dto/createPost.dto';
 import { endpoints } from '@gateway/src/features/post/api/post.controller';
+import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 
 export class PostTestHelper {
   globalPrefix = getGlobalPrefix();
@@ -49,6 +50,24 @@ export class PostTestHelper {
       .delete(this.globalPrefix + endpoints.deletePost(postId))
       .send()
       .set('Authorization', `Bearer ${accessToken}`)
+      .expect(expectedCode);
+  }
+
+  async getPosts(query?: PostQueryDto, config: { expectedCode?: number } = {}) {
+    const expectedCode = config.expectedCode ?? HttpStatus.OK;
+
+    return request(this.app.getHttpServer())
+      .get(this.globalPrefix + '/public/post')
+      .query(query)
+      .send()
+      .expect(expectedCode);
+  }
+  async getPostById(id, config: { expectedCode?: number } = {}) {
+    const expectedCode = config.expectedCode ?? HttpStatus.OK;
+
+    return request(this.app.getHttpServer())
+      .get(this.globalPrefix + `/public/post/${id}`)
+      .send()
       .expect(expectedCode);
   }
 }

@@ -7,6 +7,7 @@ import { LoginProviderDto } from './dto';
 import { NewPasswordDto } from '../user/dto';
 import { UserFacade } from '../user/user.facade';
 import { DeviceFacade } from '../device/device.facade';
+import { GitHubLoginCommand } from '@gateway/src/features/auth/application/use-cases/githubLogin.usecase';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,14 @@ export class AuthService {
       GoogleLoginCommand,
       Result<CreateTokensType>
     >(new GoogleLoginCommand(providerDto));
+  }
+  async githubLogin(
+    providerDto: LoginProviderDto,
+  ): Promise<Result<CreateTokensType>> {
+    return this.commandBus.execute<
+      GitHubLoginCommand,
+      Result<CreateTokensType>
+    >(new GitHubLoginCommand(providerDto));
   }
 
   async newPassword(dto: NewPasswordDto): Promise<Result> {

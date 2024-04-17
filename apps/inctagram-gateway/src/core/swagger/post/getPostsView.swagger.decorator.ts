@@ -3,21 +3,17 @@ import {
   ApiOperation,
   ApiOkResponse,
   ApiNotFoundResponse,
-  ApiUnauthorizedResponse,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ResponseUserDto } from '@gateway/src/features/user/responses';
 import { NOT_FOUND } from '../swagger.constants';
 import { ApiErrorResponse } from '../../responses';
+import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePost.dto';
 
-export function MeSwaggerDecorator() {
+export function GetPostsViewSwaggerDecorator() {
   return applyDecorators(
-    ApiBearerAuth(),
-    ApiUnauthorizedResponse({ type: ApiErrorResponse }),
     ApiOperation({
-      summary: 'Me profiler',
+      summary: 'Get posts',
     }),
-    ApiOkResponse({ type: ResponseUserDto }),
+    ApiOkResponse({ type: ResponsePostDto, isArray: true }),
     ApiNotFoundResponse({ type: ApiErrorResponse, description: NOT_FOUND }),
   );
 }

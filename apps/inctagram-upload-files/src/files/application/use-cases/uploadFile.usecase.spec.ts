@@ -10,13 +10,12 @@ import { FileType } from '@libs/types/fileType.enum';
 import { FileRepository } from '../../db/file.repository';
 import { AppModule } from '@fileService/src/app.module';
 
-// TODO можно ли как-то ускорить тест?
-
 describe('UploadFileUseCase', () => {
   let module: TestingModule;
   let fileStorageAdapter: S3StorageAdapter;
   let fileModel: Model<File>;
   let useCase: UploadFileUseCase;
+  // let fileRepo: FileRepository;
 
   const mockFileModel = {
     save: jest.fn(),
@@ -38,6 +37,7 @@ describe('UploadFileUseCase', () => {
     }).compile();
 
     fileStorageAdapter = module.get<S3StorageAdapter>(S3StorageAdapter);
+    //fileRepo = module.get<FileRepository>(FileRepository);
     useCase = module.get<UploadFileUseCase>(UploadFileUseCase);
     fileModel = module.get<Model<File>>(getModelToken(File.name));
   });
@@ -86,4 +86,30 @@ describe('UploadFileUseCase', () => {
       expect(result.fileId).toBe(fileIdResponse._id);
     });
   });
+
+  // it(`Sending image`, async () => {
+  //   const imagePath = join(__dirname, 'wallpaper.jpg');
+  //   const imageData = fs.readFileSync(imagePath);
+  //
+  //   console.log(imagePath);
+  //
+  //   const payload: FileUploadRequest = {
+  //     userId: 'userId',
+  //     originalname: 'originalname',
+  //     buffer: imageData,
+  //     format: 'jpg',
+  //     fileType: FileType.Avatar,
+  //   };
+  //
+  //   const response = await useCase.execute({ payload });
+  //
+  //   console.log(response);
+  //
+  //   // await new Promise((resolve) => setTimeout(resolve, 5000));
+  // });
+  //
+  // it(`Get file info`, async () => {
+  //   const fileInfo = await fileRepo.findFileById('65e63d07142e9e69792dbaea');
+  //   console.log(fileInfo);
+  // });
 });

@@ -8,6 +8,7 @@ import {
   HttpCode,
   HttpStatus,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
   Post,
   Put,
@@ -28,21 +29,21 @@ import { AccessTokenGuard } from '../../auth/guards/accessJwt.guard';
 import { ImageInputDto, UpdateUserDto } from '../dto';
 import { UserQueryRepository } from '../db';
 import { ResponseUserDto } from '../responses';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { MeSwaggerDecorator } from '../../../core/swagger/user/me.swagger.decorator';
 import { UpdateUserSwaggerDecorator } from '../../../core/swagger/user/updateUser.swagger.decorator';
 import { DeleteUserAvatarSwaggerDecorator } from '@gateway/src/core/swagger/user/deleteUserAvatar.swagger.decorator';
-import { UploadUserAvatarSwaggerDecorator } from '@gateway/src/core/swagger/user/uploadUserAvatar.swagger.decoration';
+import { UploadUserAvatarSwaggerDecorator } from '@gateway/src/core/swagger/user/uploadUserAvatar.swagger.decorator';
+import { UserSwaggerDecorator } from '@gateway/src/core/swagger/user/user.swagger.decorator';
 
 const baseUrl = '/user';
 export const endpoints = {
   me: () => `${baseUrl}/me`,
+  getUser: () => `${baseUrl}`,
   updateUser: () => `${baseUrl}`,
 };
 
 @ApiTags('User')
-@ApiBearerAuth()
-@UseGuards(AccessTokenGuard)
 @Controller('user')
 export class UserController {
   constructor(
@@ -51,9 +52,21 @@ export class UserController {
   ) {}
 
   @MeSwaggerDecorator()
+  @UseGuards(AccessTokenGuard)
   @Get('me')
   async me(@CurrentUserId() userId: string): Promise<ResponseUserDto> {
-    const userViewResult = await this.userQueryRepo.getUserViewById(userId);
+    const userViewResult = await this.userQueryRepo.getUserView(userId);
+    if (!userViewResult.isSuccess) {
+      throw userViewResult.err;
+    }
+    return userViewResult.value;
+  }
+
+  @UserSwaggerDecorator()
+  @Get(':userName')
+  async getUser(@Param('userName') userName: string): Promise<ResponseUserDto> {
+    const userViewResult = await this.userQueryRepo.getUserView(userName);
+
     if (!userViewResult.isSuccess) {
       throw userViewResult.err;
     }
@@ -61,6 +74,7 @@ export class UserController {
   }
 
   @UpdateUserSwaggerDecorator()
+  @UseGuards(AccessTokenGuard)
   @Put()
   async updateUser(
     @CurrentUserId() userId: string,
@@ -75,7 +89,7 @@ export class UserController {
       throw updateResult.err;
     }
 
-    const userViewResult = await this.userQueryRepo.getUserViewById(userId);
+    const userViewResult = await this.userQueryRepo.getUserView(userId);
     if (!userViewResult.isSuccess) {
       throw userViewResult.err;
     }
@@ -83,6 +97,7 @@ export class UserController {
   }
 
   @UploadUserAvatarSwaggerDecorator()
+  @UseGuards(AccessTokenGuard)
   @Post('avatar')
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatar(
@@ -117,6 +132,7 @@ export class UserController {
   }
 
   @DeleteUserAvatarSwaggerDecorator()
+  @UseGuards(AccessTokenGuard)
   @Delete('avatar')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAvatar(@CurrentUserId() userId: string) {

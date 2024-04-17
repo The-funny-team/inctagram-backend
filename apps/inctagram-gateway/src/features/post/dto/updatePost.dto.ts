@@ -11,7 +11,7 @@ export class UpdatePostDto {
     maxLength: 500,
     pattern: '0-9; A-Z; a-z; _ ; -',
   })
-  @Matches('^[a-zA-Z0-9_-\\s]*$')
+  @Matches('^[a-zA-Z0-9_ -\\s]*$')
   @Length(3, 500, { message: ERROR_LENGTH_DESCRIPTION })
   @IsString()
   @IsNotEmpty()
