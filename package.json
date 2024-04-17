@@ -9,6 +9,7 @@
     "build": "nest build",
     "build:inctagram-gateway": "nest build inctagram-gateway",
     "build:inctagram-upload-files": "nest build inctagram-upload-files",
+    "format:check": "prettier --check \"{apps,libs,test}/**/*.ts\"",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:inctagram-gateway": "node dist/apps/inctagram-gateway/apps/inctagram-gateway/src/main",
