@@ -19,9 +19,8 @@ export class PasswordStrategy extends PassportStrategy(Strategy) {
     await loginDto.validate();
 
     //if input values are correct, check credentials
-    const result = await this.userFacade.useCases.checkUserCredentials(
-      loginDto,
-    );
+    const result =
+      await this.userFacade.useCases.checkUserCredentials(loginDto);
     // if user isn`t found in db, should take error
     if (!result.isSuccess) throw result.err;
 

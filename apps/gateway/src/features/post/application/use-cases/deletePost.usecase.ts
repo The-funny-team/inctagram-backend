@@ -66,9 +66,8 @@ export class DeletePostUseCase implements ICommandHandler<DeletePostCommand> {
           throw new NotFoundError(ERROR_POST_NOT_FOUND);
         }
 
-        const isPostImagesDeleted = await this.fileServiceAdapter.deleteFiles(
-          postImageIds,
-        );
+        const isPostImagesDeleted =
+          await this.fileServiceAdapter.deleteFiles(postImageIds);
 
         if (!isPostImagesDeleted.isSuccess) {
           throw new BadGatewayError(ERROR_DELETE_FILE);

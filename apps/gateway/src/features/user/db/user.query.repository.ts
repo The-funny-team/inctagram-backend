@@ -37,9 +37,8 @@ export class UserQueryRepository {
       const responseOfService = this.fileServiceClient
         .send({ cmd: 'get_file_url' }, { fileId: user.avatarId })
         .pipe(timeout(10000));
-      const avatarUrl: FileUrlResponse = await firstValueFrom(
-        responseOfService,
-      );
+      const avatarUrl: FileUrlResponse =
+        await firstValueFrom(responseOfService);
       return Result.Ok(ResponseUserDto.getView(user, avatarUrl.url));
     } catch (error) {
       this.logger.log(`userName or id: ${nameOrId} - ${error}`);

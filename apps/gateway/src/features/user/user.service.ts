@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import add from 'date-fns/add';
+import { add } from 'date-fns';
 import { UserConfig } from './config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
