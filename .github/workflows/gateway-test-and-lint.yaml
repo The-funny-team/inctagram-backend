@@ -3,7 +3,7 @@ name: Main Gateway Test & Lint
 on:
   push:
     paths:
-      - apps/inctagram-gateway/**
+      - apps/gateway/**
       - .github/workflows/**
     branches-ignore:
       - release/**
