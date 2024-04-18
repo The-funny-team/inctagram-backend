@@ -1,4 +1,4 @@
-name: Libs Test & Lint
+name: Libs lint
 
 on:
   push:

@@ -20,10 +20,30 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Unit tests') {
+        stage('Install dependency') {
             steps {
                 script {
                     sh "yarn install"
+                }
+            }
+        }
+        stage('Typescript Check') {
+            steps {
+                script {
+                    sh "yarn tsc:gateway:check"
+                }
+            }
+        }
+        stage('Lint Check') {
+            steps {
+                script {
+                    sh "yarn lint:gateway:check"
+                }
+            }
+        }
+        stage('Unit tests') {
+            steps {
+                script {
                     sh "yarn run test:gateway"
                 }
             }
