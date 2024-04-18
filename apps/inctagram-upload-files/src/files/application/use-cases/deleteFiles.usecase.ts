@@ -3,7 +3,7 @@ import { S3StorageAdapter } from '../../adapters';
 import { FileRepository } from '../../db/file.repository';
 import { FileDeleteResponse } from '@libs/contracts';
 import { InjectModel } from '@nestjs/mongoose';
-import { File } from '@fileService/src/files/models/file.model';
+import { File } from '../../models/file.model';
 import { Model } from 'mongoose';
 
 export class DeleteFilesCommand {

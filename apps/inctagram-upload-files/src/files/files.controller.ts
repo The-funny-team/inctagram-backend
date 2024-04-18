@@ -15,7 +15,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { MessagePattern } from '@nestjs/microservices';
 import { DeleteFileCommand, UploadFileCommand } from './application';
 import { FilesService } from './files.service';
-import { DeleteFilesCommand } from '@fileService/src/files/application/use-cases/deleteFiles.usecase';
+import { DeleteFilesCommand } from './application/use-cases/deleteFiles.usecase';
 import { FilesDeleteRequest } from '@libs/contracts/user/avatar/filesDeleteRequest.dto';
 import {
   DELETE_FILE,

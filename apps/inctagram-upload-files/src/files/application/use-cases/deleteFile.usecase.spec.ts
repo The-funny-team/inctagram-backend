@@ -3,7 +3,6 @@ import { S3StorageAdapter } from '../../adapters';
 import { getModelToken } from '@nestjs/mongoose';
 import { File } from '../../models/file.model';
 import { FileRepository } from '../../db/file.repository';
-import { AppModule } from '@fileService/src/app.module';
 import { DeleteFileCommand, DeleteFileUseCases } from './deleteFile.usecase';
 
 // TODO можно ли как-то ускорить тест?
