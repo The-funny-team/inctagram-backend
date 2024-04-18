@@ -20,17 +20,16 @@ WORKDIR /home/node/dist/${SERVICE}
 
 
 COPY --chown=node package*.json ./
-COPY --chown=node yarn.lock ./
 
-RUN yarn install
+RUN npm install
 
 # Bundle app source code
 COPY --chown=node . .
 
-RUN yarn build:${SERVICE}
+RUN npm run build:${SERVICE}
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 
 EXPOSE ${PORT}
 
-CMD yarn 'start:inctagram-gateway'
+CMD npm run 'start:gateway'

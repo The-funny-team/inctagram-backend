@@ -22,73 +22,73 @@ spec:
              - containerPort: PORT_CONTAINER
 
            env:
-             - name: DIRECT_URL
+             - name: DATABASE_URL
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
-                   key: DIRECT_URL
+                   name: gateway-production-config-secret
+                   key: DATABASE_URL
              - name: ACCESS_JWT_SECRET
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: ACCESS_JWT_SECRET
              - name: REFRESH_JWT_SECRET
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: REFRESH_JWT_SECRET
              - name: TECH_EMAIL
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: TECH_EMAIL
              - name: TECH_EMAIL_PASSWORD
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: TECH_EMAIL_PASSWORD
              - name: TECH_EMAIL_HOST
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: TECH_EMAIL_HOST
              - name: TECH_EMAIL_PORT
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: TECH_EMAIL_PORT
              - name: TECH_EMAIL_SECURE
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: TECH_EMAIL_SECURE
              - name: GOOGLE_OAUTH_REDIRECT
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: GOOGLE_OAUTH_REDIRECT
              - name: GOOGLE_OAUTH_CLIENT_ID
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: GOOGLE_OAUTH_CLIENT_ID
              - name: GOOGLE_OAUTH_CLIENT_SECRET
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: GOOGLE_OAUTH_CLIENT_SECRET
              - name: FRONTEND_EMAIL_CONFIRMATION_URL
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: FRONTEND_EMAIL_CONFIRMATION_URL
              - name: FRONTEND_EMAIL_CONFIRMATION_PASSWORD_RECOVERY_URL
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: FRONTEND_EMAIL_CONFIRMATION_PASSWORD_RECOVERY_URL
              - name: DATABASE_URL
                valueFrom:
                  secretKeyRef:
-                   name: ft-inctagram-gateway-production-config-secret
+                   name: gateway-production-config-secret
                    key: DATABASE_URL
