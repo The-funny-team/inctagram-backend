@@ -29,7 +29,7 @@ export class UserPasswordRecoveryUseCase
       passwordRecoveryDto.email,
     );
 
-    if (!user) {
+    if (!user || !user.userRegistrationInfo) {
       return Result.Err(
         new BadRequestError(ERROR_USER_WITH_THIS_EMAIL_NOT_EXIST, 'email'),
       );

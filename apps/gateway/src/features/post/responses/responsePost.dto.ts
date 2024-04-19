@@ -35,7 +35,7 @@ export class ResponsePostDto {
   imagesUrl: string[];
 
   static getView(post: Post, imagesData?: FileInfoResponse[]): ResponsePostDto {
-    let imagesDataForPost: FileInfoResponse[];
+    let imagesDataForPost: FileInfoResponse[] | null = null;
 
     if (imagesData) {
       imagesDataForPost = imagesData.filter(

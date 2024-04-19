@@ -62,6 +62,8 @@ describe('UploadFileUseCase', () => {
       const payload: FileUploadRequest = {
         userId: 'userId',
         originalname: 'originalname',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         buffer: null,
         format: 'format',
         fileType: FileType.Avatar,
@@ -74,6 +76,8 @@ describe('UploadFileUseCase', () => {
         fileStorageResult,
         fileIdResponse,
       );
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       delete saveResponse.buffer;
 
       jest

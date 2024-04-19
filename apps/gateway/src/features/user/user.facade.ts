@@ -104,7 +104,7 @@ export class UserFacade {
   }
 
   private async newPassword(dto: NewPasswordDto): Promise<Result<User>> {
-    return this.commandBus.execute<NewPasswordCommand, Result>(
+    return this.commandBus.execute<NewPasswordCommand, Result<User>>(
       new NewPasswordCommand(dto),
     );
   }

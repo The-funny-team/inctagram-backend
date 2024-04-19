@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from '../../dto/createPost.dto';
-import { PostRepository } from '../../db/post.repository';
 import { Post } from '@prisma/client';
 import { BadGatewayError, FileServiceAdapter, Result } from '@gateway/src/core';
 import { PrismaService } from '@gateway/src/core/prisma/prisma.servise';
@@ -16,7 +15,6 @@ export class CreatePostCommand {
 @CommandHandler(CreatePostCommand)
 export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
   constructor(
-    private readonly postRepo: PostRepository,
     private readonly fileServiceAdapter: FileServiceAdapter,
     private readonly prismaService: PrismaService,
   ) {}

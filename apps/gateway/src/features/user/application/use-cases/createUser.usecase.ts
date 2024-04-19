@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserConfig } from '../../config';
 import { UserRepository } from '../../db';
 import { CreateUserDto, CreateUserInfoDto } from '../../dto';
 import { UserService } from '../../user.service';
@@ -11,7 +10,6 @@ import {
   ERROR_USERNAME_IS_ALREADY_REGISTRED,
 } from '../../user.constants';
 import { CreatedUserWithRegistrationInfo } from '../../types';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export class CreateUserCommand {
   constructor(public userDto: CreateUserDto) {}
@@ -20,15 +18,15 @@ export class CreateUserCommand {
 @CommandHandler(CreateUserCommand)
 export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   constructor(
-    private readonly userConfig: UserConfig,
     private readonly userService: UserService,
     private readonly userRepo: UserRepository,
-    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async execute({
     userDto,
-  }: CreateUserCommand): Promise<Result<CreatedUserWithRegistrationInfo>> {
+  }: CreateUserCommand): Promise<
+    Result<CreatedUserWithRegistrationInfo | null>
+  > {
     console.log('enter CreateUserUseCase');
     await validateOrRejectModel(userDto, CreateUserDto);
 
@@ -40,10 +38,10 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
 
     console.log('userByEmail');
 
-    if (this.isCorrectNotConfirmedUser(userByEmail, userDto)) {
+    if (this.isCorrectNotConfirmedUser(userByEmail!, userDto)) {
       await this.userService.updateConfirmationCode(
-        userByEmail.userRegistrationInfo.id,
-        userByEmail.email,
+        userByEmail!.userRegistrationInfo!.id,
+        userByEmail!.email,
       );
       console.log('successfully update');
       return Result.Ok(userByEmail);
@@ -77,7 +75,7 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
 
     this.userService.createUserInfoCreatedEvent(
       createdUser.email,
-      userInfo.confirmationCode,
+      userInfo.confirmationCode!,
     );
 
     console.log('event created');
@@ -102,8 +100,11 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
       user &&
       user.name === userDto.username &&
       user.email === userDto.email &&
-      this.userService.isCorrectPassword(userDto.password, user.hashPassword) &&
-      !user.userRegistrationInfo.isConfirmed
+      this.userService.isCorrectPassword(
+        userDto.password,
+        user.hashPassword!,
+      ) &&
+      !user.userRegistrationInfo?.isConfirmed
     );
   }
 }

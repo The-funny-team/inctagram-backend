@@ -3,8 +3,8 @@ import { CustomError } from './exceptions';
 export class Result<T = null> {
   constructor(
     private readonly _isSuccess: boolean,
-    private readonly _value?: T,
-    private readonly _error?: CustomError,
+    private readonly _value: T | null = null,
+    private readonly _error: CustomError | null = null,
   ) {}
 
   public static Ok<T>(value?: T): Result<T> {
@@ -20,11 +20,11 @@ export class Result<T = null> {
   }
 
   get value(): T {
-    return this._value;
+    return <T>this._value;
   }
 
   get err(): CustomError {
-    return this._error;
+    return <CustomError>this._error;
   }
 
   get isSuccess(): boolean {

@@ -14,7 +14,7 @@ export class UserTestHelper {
   async createRegisteredAndVerifiedUser(
     newUserData: CreateUserDto,
     authTestHelper: AuthTestHelper,
-    emailAdapterMock,
+    emailAdapterMock: { sendEmail: jest.Mock },
   ): Promise<ResponseUserDto> {
     const { body } = await authTestHelper.registrationUser(newUserData);
     const user: ResponseUserDto = body;

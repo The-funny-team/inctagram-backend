@@ -14,7 +14,7 @@ export class AccessTokenStrategy extends PassportStrategy(
   'jwt-access',
 ) {
   constructor(
-    private jwtConfig: JwtConfig,
+    readonly jwtConfig: JwtConfig,
     private userFacade: UserFacade,
   ) {
     super({

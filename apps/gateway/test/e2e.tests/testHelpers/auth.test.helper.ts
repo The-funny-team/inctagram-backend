@@ -54,7 +54,7 @@ export class AuthTestHelper {
 
   async login(
     loginDto: LoginDto,
-    deviceName,
+    deviceName: string,
     config: {
       expectedCode?: number;
     } = {},
@@ -69,8 +69,8 @@ export class AuthTestHelper {
   }
 
   async newRefreshToken(
-    refreshToken,
-    deviceName,
+    refreshToken: string,
+    deviceName: string,
     config: {
       expectedCode?: number;
     } = {},

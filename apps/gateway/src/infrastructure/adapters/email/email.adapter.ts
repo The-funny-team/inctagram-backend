@@ -12,7 +12,7 @@ export class EmailAdapter {
   private TECH_EMAIL_PORT: number;
   private TECH_EMAIL_SECURE: boolean;
 
-  constructor(private readonly emailConfig: EmailConfig) {
+  constructor(readonly emailConfig: EmailConfig) {
     const settings = emailConfig.getEmailSettings();
     this.TECH_EMAIL = settings.TECH_EMAIL;
     this.TECH_EMAIL_PASSWORD = settings.TECH_EMAIL_PASSWORD;

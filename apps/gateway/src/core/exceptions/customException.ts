@@ -9,7 +9,7 @@ export class CustomError extends Error {
   }
 
   get code(): number {
-    return this._code;
+    return <number>this._code;
   }
 
   get message(): string {

@@ -3,11 +3,21 @@ import { UpdateUserDto } from './updateUser.dto';
 import { validate } from 'class-validator';
 import { randomString } from '@gateway/test/e2e.tests/utils/tests.utils';
 
+interface CurrentInputDataType {
+  username: any;
+  firstName: any;
+  lastName: any;
+  dateOfBirth: any;
+  country: any;
+  city: any;
+  aboutMe: any;
+}
+
 describe('UpdateUserDto', () => {
-  let correctInputData;
+  let correctInputData: CurrentInputDataType;
 
   beforeEach(() => {
-    correctInputData = {
+    correctInputData = <CurrentInputDataType>{
       username: 'new_user',
       firstName: 'Ivan',
       lastName: 'Ivanov',
@@ -36,6 +46,8 @@ describe('UpdateUserDto', () => {
   });
 
   it('username field is missing ', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     delete correctInputData.username;
     const updateUserDto = plainToInstance(UpdateUserDto, correctInputData);
     const errors = await validate(updateUserDto);
@@ -60,6 +72,8 @@ describe('UpdateUserDto', () => {
   });
 
   it('firstName field is missing ', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     delete correctInputData.firstName;
     const updateUserDto = plainToInstance(UpdateUserDto, correctInputData);
     const errors = await validate(updateUserDto);
@@ -84,6 +98,8 @@ describe('UpdateUserDto', () => {
   });
 
   it('lastName field is missing ', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     delete correctInputData.lastName;
     const updateUserDto = plainToInstance(UpdateUserDto, correctInputData);
     const errors = await validate(updateUserDto);

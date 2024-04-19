@@ -1,7 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostRepository } from '@gateway/src/features/post/db/post.repository';
-import { BadGatewayError, FileServiceAdapter, Result } from '@gateway/src/core';
-import { ForbiddenError, NotFoundError } from '@gateway/src/core';
+import {
+  BadGatewayError,
+  FileServiceAdapter,
+  ForbiddenError,
+  NotFoundError,
+  Result,
+} from '@gateway/src/core';
 import {
   ERROR_DELETE_POST,
   ERROR_NOT_PERMITTED,
@@ -11,7 +16,7 @@ import { PrismaService } from '@gateway/src/core/prisma/prisma.servise';
 import { Logger } from '@nestjs/common';
 import { ERROR_DELETE_FILE } from '@gateway/src/core/adapters/fileService/fileService.constants';
 import { PostImageRepository } from '@gateway/src/features/post/db/postImage.repository';
-import { Post, PostImage } from '@prisma/client';
+import { PostImage } from '@prisma/client';
 
 export class DeletePostCommand {
   constructor(
@@ -32,7 +37,7 @@ export class DeletePostUseCase implements ICommandHandler<DeletePostCommand> {
   ) {}
 
   async execute(command: DeletePostCommand) {
-    const post: Post = await this.postRepo.findById(command.postId);
+    const post = await this.postRepo.findById(command.postId);
 
     if (!post) {
       return Result.Err(new NotFoundError(ERROR_POST_NOT_FOUND));
@@ -47,7 +52,7 @@ export class DeletePostUseCase implements ICommandHandler<DeletePostCommand> {
     );
 
     const postImageIds = postImages.map((postImage) => {
-      return postImage.imageId;
+      return postImage.imageId!;
     });
 
     const deleteResult = await this.prismaService.$transaction(

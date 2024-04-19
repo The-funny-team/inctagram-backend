@@ -27,7 +27,7 @@ export class UploadFileUseCase implements ICommandHandler<UploadFileCommand> {
       userId: payload.userId,
       fileType: payload.fileType,
       originalname: payload.originalname,
-      format: payload.format,
+      format: payload.format!,
       url: downloadFile.url,
       fileId: downloadFile.fileId,
     };

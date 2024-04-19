@@ -144,12 +144,12 @@
     ],
     "moduleNameMapper": {
       "^@gateway/(.*)$": "<rootDir>/apps/gateway/$1",
-      "^@libs/(.*)$": ".<rootDir>/../../libs/$1",
-      "^@fileService/(.*)$": "<rootDir>/apps/inctagram-upload-files/$1"
+      "^@libs/(.*)$": ".<rootDir>/libs/$1",
+      "^@fileService/(.*)$": "<rootDir>/apps/inctagram/$1"
     },
     "testTimeout": 15000
   },
   "prisma": {
-    "schema": "./apps/inctagram-gateway/prisma/schema.prisma"
+    "schema": "./apps/gateway/prisma/schema.prisma"
   }
 }

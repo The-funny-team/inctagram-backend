@@ -69,7 +69,6 @@ export class DeviceFacade {
   private async deleteDevicesByUserId(userId: string): Promise<void> {
     await this.deviceRepo.deleteDevicesByUserId(userId);
   }
-  x;
 
   private async checkDeviceCredentials(
     devicePayload: DeviceInfo & UserId,

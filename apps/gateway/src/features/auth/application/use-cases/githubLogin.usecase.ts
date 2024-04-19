@@ -27,12 +27,12 @@ export class GitHubLoginUseCase
 {
   logger = new Logger(GitHubLoginUseCase.name);
   provider = Provider.GIT_HUB;
-  settingsOauth2;
+  settingsOauth2: any | null = null;
 
   constructor(
     userFacade: UserFacade,
     deviceFacade: DeviceFacade,
-    private readonly githubOauth2Config: GitHubOauth2Config,
+    readonly githubOauth2Config: GitHubOauth2Config,
     private readonly httpService: HttpService,
   ) {
     super(userFacade, deviceFacade);
