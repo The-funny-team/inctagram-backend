@@ -39,9 +39,8 @@ export class FileServiceAdapter {
         .send({ cmd: UPLOAD_FILE }, payload)
         .pipe(timeout(10000));
 
-      const resultResponse: FileUploadResponse = await firstValueFrom(
-        responseOfService,
-      );
+      const resultResponse: FileUploadResponse =
+        await firstValueFrom(responseOfService);
       return Result.Ok(resultResponse);
     } catch (error) {
       this.logger.error(error);
@@ -97,9 +96,8 @@ export class FileServiceAdapter {
       const responseOfService = this.fileServiceClient
         .send({ cmd: GET_FILES_INFO }, { ids })
         .pipe(timeout(10000));
-      const response: FileInfoResponse[] = await firstValueFrom(
-        responseOfService,
-      );
+      const response: FileInfoResponse[] =
+        await firstValueFrom(responseOfService);
 
       return Result.Ok(response);
     } catch (error) {

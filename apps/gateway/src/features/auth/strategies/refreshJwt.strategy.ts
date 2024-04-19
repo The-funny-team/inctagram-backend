@@ -40,9 +40,8 @@ export class RefreshJwtStrategy extends PassportStrategy(
       expirationDate: new Date(exp * 1000),
     };
 
-    const result = await this.deviceFacade.useCases.checkDeviceCredentials(
-      devicePayload,
-    );
+    const result =
+      await this.deviceFacade.useCases.checkDeviceCredentials(devicePayload);
 
     if (!result.isSuccess) throw result.err;
 

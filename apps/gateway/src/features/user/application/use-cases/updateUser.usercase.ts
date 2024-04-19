@@ -7,7 +7,7 @@ import {
   ERROR_USERNAME_IS_ALREADY_REGISTRED,
   USER_NOT_FOUND,
 } from '../../user.constants';
-import add from 'date-fns/add';
+import { add } from 'date-fns';
 
 export class UpdateUserCommand {
   constructor(

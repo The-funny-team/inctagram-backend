@@ -137,9 +137,8 @@ export class AuthController {
   async passwordRecovery(
     @Body() passwordRRecoveryDto: UserPasswordRecoveryDto,
   ) {
-    const recoveryResult = await this.userFacade.useCases.passwordRecovery(
-      passwordRRecoveryDto,
-    );
+    const recoveryResult =
+      await this.userFacade.useCases.passwordRecovery(passwordRRecoveryDto);
     if (!recoveryResult.isSuccess) {
       throw recoveryResult.err;
     }
