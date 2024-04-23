@@ -8,5 +8,5 @@ type UserByEmailOrUsername = Pick<
 type UserInfoIsConfirmed = Pick<UserRegistrationInfo, 'id' | 'isConfirmed'>;
 
 export type CreatedUserWithRegistrationInfo = UserByEmailOrUsername & {
-  userRegistrationInfo: UserInfoIsConfirmed;
+  userRegistrationInfo: UserInfoIsConfirmed | null;
 };

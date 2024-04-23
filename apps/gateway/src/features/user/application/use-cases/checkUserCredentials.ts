@@ -33,7 +33,7 @@ export class CheckUserCredentialsUseCase
     );
     if (!isMatched) return Result.Err(new UnauthorizedError(ERROR_USER_LOGIN));
 
-    if (!user.userRegistrationInfo.isConfirmed)
+    if (!user.userRegistrationInfo!.isConfirmed)
       return Result.Err(new UnauthorizedError(ERROR_USER_LOGIN));
 
     return Result.Ok({ userId: user.id });

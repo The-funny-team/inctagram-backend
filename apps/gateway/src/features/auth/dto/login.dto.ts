@@ -12,7 +12,7 @@ import { BadRequestException } from '@nestjs/common';
 import { IsPasswordMustContain } from '../../user/decorators';
 
 export class LoginDto {
-  constructor(email, password) {
+  constructor(email: string, password: string) {
     this.password = password;
     this.email = email;
   }

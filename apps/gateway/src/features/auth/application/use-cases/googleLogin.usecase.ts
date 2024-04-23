@@ -7,7 +7,10 @@ import { LoginProviderDto } from '../../dto';
 import { UserFacade } from '../../../user/user.facade';
 import { DeviceFacade } from '../../../device/device.facade';
 import { Logger } from '@nestjs/common';
-import { GoogleOauth2Config } from '../../../device/config';
+import {
+  GoogleOauth2Config,
+  GoogleOauth2Settings,
+} from '../../../device/config';
 import { HttpService } from '@nestjs/axios';
 import {
   ERROR_GOOGLE_ACCOUNT_NOT_VERIFIED,
@@ -28,12 +31,12 @@ export class GoogleLoginUseCase
 {
   logger = new Logger(GoogleLoginUseCase.name);
   provider = Provider.GOOGLE;
-  settingsOauth2;
+  settingsOauth2: GoogleOauth2Settings | null = null;
 
   constructor(
     userFacade: UserFacade,
     deviceFacade: DeviceFacade,
-    private readonly googleOauth2Config: GoogleOauth2Config,
+    readonly googleOauth2Config: GoogleOauth2Config,
     private readonly httpService: HttpService,
   ) {
     super(userFacade, deviceFacade);
@@ -68,14 +71,14 @@ export class GoogleLoginUseCase
   private async getGoogleOauthToken(
     code: string,
   ): Promise<Result<GoogleOauthToken>> {
-    const rootURl = this.settingsOauth2.rootURl;
+    const rootURl = this.settingsOauth2!.rootURl!;
 
     const options = {
       code,
-      client_id: this.settingsOauth2.clientId,
-      client_secret: this.settingsOauth2.clientSecret,
-      redirect_uri: this.settingsOauth2.redirectUri,
-      grant_type: this.settingsOauth2.grantType,
+      client_id: this.settingsOauth2!.clientId,
+      client_secret: this.settingsOauth2!.clientSecret,
+      redirect_uri: this.settingsOauth2!.redirectUri,
+      grant_type: this.settingsOauth2!.grantType,
     };
     try {
       const { data } = await this.httpService.axiosRef.post<GoogleOauthToken>(
@@ -101,7 +104,7 @@ export class GoogleLoginUseCase
   ): Promise<Result<GoogleUserResult>> {
     try {
       const { data } = await this.httpService.axiosRef.get<GoogleUserResult>(
-        `${this.settingsOauth2.accessTokenURL}?alt=json&access_token=${access_token}`,
+        `${this.settingsOauth2!.accessTokenURL}?alt=json&access_token=${access_token}`,
         {
           headers: {
             Authorization: `Bearer ${id_token}`,

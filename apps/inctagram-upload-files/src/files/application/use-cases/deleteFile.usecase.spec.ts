@@ -79,7 +79,7 @@ describe('DeleteFileUseCases', () => {
     it('should be file deletion error', async () => {
       const spyfindFileById = jest
         .spyOn(fileRepo, 'findFileById')
-        .mockReturnValueOnce(null);
+        .mockReturnValueOnce(null as any);
 
       jest.spyOn(fileRepo, 'deleteFile').mockReturnValueOnce(true as any);
       jest

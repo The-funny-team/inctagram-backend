@@ -5,7 +5,7 @@ export class FileUploadRequest {
   userId: string;
   originalname: string;
   buffer: Buffer;
-  format: string;
+  format?: string;
   fileType: FileType;
   ownerId?: string;
   expirationDate?: Date;

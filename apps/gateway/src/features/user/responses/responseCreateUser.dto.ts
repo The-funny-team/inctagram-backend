@@ -17,10 +17,10 @@ export class ResponseUserDto {
   email: string;
 
   @ApiProperty({ description: 'First name', type: 'string', nullable: true })
-  firstName: string;
+  firstName: string | null;
 
   @ApiProperty({ description: 'Last name', type: 'string', nullable: true })
-  lastName: string;
+  lastName: string | null;
 
   @ApiProperty({
     description: 'Date of birth',
@@ -28,13 +28,13 @@ export class ResponseUserDto {
     example: new Date().toISOString(),
     nullable: true,
   })
-  dateOfBirth: string;
+  dateOfBirth: string | null;
 
   @ApiProperty({ description: 'Country', type: 'string', nullable: true })
-  country: string;
+  country: string | null;
 
   @ApiProperty({ description: 'City', type: 'string', nullable: true })
-  city: string;
+  city: string | null;
 
   @ApiProperty({
     description: 'creation date',
@@ -55,14 +55,14 @@ export class ResponseUserDto {
     type: 'string',
     nullable: true,
   })
-  aboutMe: string;
+  aboutMe: string | null;
 
   @ApiProperty({
     description: 'Avatar file url',
     type: 'string',
     nullable: true,
   })
-  avatarUrl: string;
+  avatarUrl: string | null;
 
   static getView(user: User, avatarUrl?: string): ResponseUserDto {
     return {

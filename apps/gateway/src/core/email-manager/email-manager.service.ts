@@ -17,7 +17,7 @@ export class EmailManagerService {
   private PASSWORD_RECOVERY_URL: string;
 
   constructor(
-    private readonly appConfig: AppConfig,
+    readonly appConfig: AppConfig,
     private readonly emailAdapter: EmailAdapter,
   ) {
     this.CONFIRMATION_URL = appConfig.getFrontendEmailConfirmationUrl();

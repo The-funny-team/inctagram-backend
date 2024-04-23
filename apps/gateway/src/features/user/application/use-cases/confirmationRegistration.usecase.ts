@@ -15,6 +15,7 @@ export class ConfirmationRegistrationUseCase
   implements ICommandHandler<ConfirmationRegistrationCommand>
 {
   constructor(private readonly userRepo: UserRepository) {}
+
   async execute({
     confirmDto,
   }: ConfirmationRegistrationCommand): Promise<Result<boolean>> {
@@ -28,7 +29,11 @@ export class ConfirmationRegistrationUseCase
       return Result.Ok(true);
     }
 
-    if (!userInfo || userInfo.expirationConfirmationCode < new Date()) {
+    if (
+      !userInfo ||
+      (userInfo.expirationConfirmationCode &&
+        userInfo.expirationConfirmationCode < new Date())
+    ) {
       return Result.Err(
         new BadRequestError(ERROR_INCORRECT_CONFIRMATION_CODE, 'code'),
       );

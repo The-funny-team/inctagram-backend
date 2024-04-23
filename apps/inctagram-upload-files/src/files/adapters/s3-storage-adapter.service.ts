@@ -18,7 +18,7 @@ export class S3StorageAdapter {
   private bucketName: string;
   private settings;
 
-  constructor(private readonly yandexCloudConfig: AmazonCloudBacketConfig) {
+  constructor(readonly yandexCloudConfig: AmazonCloudBacketConfig) {
     this.settings = yandexCloudConfig.getSettings();
     this.bucketName = this.settings.AMAZON_CLOUD_BUCKET_NAME;
 
@@ -57,7 +57,7 @@ export class S3StorageAdapter {
       const uploadResult = await this.s3Client.send(command);
       return {
         url: key,
-        fileId: uploadResult.ETag,
+        fileId: uploadResult.ETag!,
       };
     } catch (exception) {
       this.logger.error(exception);

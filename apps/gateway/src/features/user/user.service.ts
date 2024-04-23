@@ -99,7 +99,7 @@ export class UserService {
       ...dataCode,
     });
 
-    this.createEventRecoveryPassword(email, dataCode.recoveryCode);
+    this.createEventRecoveryPassword(email, dataCode.recoveryCode!);
   }
 
   async getFileUrl(fileId: string): Promise<FileUrlResponse> {

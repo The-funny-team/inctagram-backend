@@ -20,7 +20,7 @@ describe('DeletePostUseCase', () => {
   let post: Post;
   let user: User;
   let postRepo: PostRepository;
-  let fileServiceClient;
+  let fileServiceClient: any;
 
   beforeEach(async () => {
     module = await Test.createTestingModule({

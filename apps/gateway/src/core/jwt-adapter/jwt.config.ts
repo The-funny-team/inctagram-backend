@@ -3,19 +3,13 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class JwtConfig {
-  private readonly _accessJwtSecret: string;
-  private readonly _refreshJwtSecret: string;
-
-  constructor(private readonly configService: ConfigService) {
-    this._accessJwtSecret = configService.get<string>('ACCESS_JWT_SECRET');
-    this._refreshJwtSecret = configService.get<string>('REFRESH_JWT_SECRET');
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   get refreshJwtSecret() {
-    return this._refreshJwtSecret;
+    return this.configService.get<string>('ACCESS_JWT_SECRET')!;
   }
 
   get accessJwtSecret() {
-    return this._accessJwtSecret;
+    return this.configService.get<string>('REFRESH_JWT_SECRET')!;
   }
 }

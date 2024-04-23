@@ -68,7 +68,7 @@ describe('UpdatePostUseCase', () => {
         where: { id: post.id },
       });
 
-      expect(updatedPost.description).toEqual('post updated');
+      expect(updatedPost!.description).toEqual('post updated');
     });
 
     it('should not update post description with wrong post id', async () => {

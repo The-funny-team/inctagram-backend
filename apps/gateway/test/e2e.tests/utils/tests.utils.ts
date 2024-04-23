@@ -2,7 +2,6 @@ import { APP_GLOBAL_PREFIX, configApp } from '../../../src/core/config';
 import { INestApplication } from '@nestjs/common';
 import { PrismaService } from '../../../src/core/prisma/prisma.servise';
 import { TestingModule } from '@nestjs/testing';
-import { v4 as uuidv4 } from 'uuid';
 
 export function getGlobalPrefix() {
   return APP_GLOBAL_PREFIX;
@@ -49,15 +48,6 @@ export function randomString(n: number) {
   return rnd.substring(0, n);
 }
 
-export function randomUUID() {
-  return uuidv4();
-}
-
-export function paramMock(mock) {
-  const lastIndex = mock.calls.length - 1;
-  return mock.calls[lastIndex];
-}
-
 export function getErrorMessagesBadRequest() {
   return {
     timestamp: expect.any(String),
@@ -72,7 +62,7 @@ export function getErrorMessagesBadRequest() {
 }
 
 export function findUUIDv4(message: string) {
-  const res =
+  const res: any =
     /[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}/i.exec(
       message,
     );

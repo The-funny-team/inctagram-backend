@@ -24,7 +24,11 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
 
     const userInfo = await this.userRepo.findByRecoveryCode(dto.recoveryCode);
 
-    if (!userInfo || userInfo.expirationRecoveryCode < new Date()) {
+    if (
+      !userInfo ||
+      (userInfo.expirationRecoveryCode &&
+        userInfo.expirationRecoveryCode < new Date())
+    ) {
       return Result.Err(
         new BadRequestError(ERROR_INCORRECT_RECOVER_CODE, 'recoveryCode'),
       );

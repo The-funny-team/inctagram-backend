@@ -3,7 +3,7 @@ import { ValidationError } from '@nestjs/common';
 export class DomainError extends Error {
   constructor(
     private readonly _errors: ValidationError[],
-    private readonly _message?: string,
+    readonly _message?: string,
   ) {
     super(_message);
   }

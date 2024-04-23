@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { InternalServerError } from '../exceptions';
 
 export const CurrentUserId = createParamDecorator(
-  (data: unknown, context: ExecutionContext): string => {
+  (_data: unknown, context: ExecutionContext): string => {
     const request = context.switchToHttp().getRequest();
 
     if (!request.user || !request.user.userId)

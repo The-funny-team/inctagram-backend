@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../core/prisma/prisma.servise';
 import { FileServiceAdapter, NotFoundError, Result } from '../../../core';
 import { ResponsePostDto } from '@gateway/src/features/post/responses/responsePost.dto';
@@ -10,8 +10,6 @@ import { PostWhereClause } from '@gateway/src/features/post/types/postWhereClaus
 
 @Injectable()
 export class PostQueryRepository {
-  private logger = new Logger(PostQueryRepository.name);
-
   constructor(
     private readonly prismaService: PrismaService,
     private readonly fileServiceAdapter: FileServiceAdapter,
@@ -36,7 +34,7 @@ export class PostQueryRepository {
       return Result.Err(new NotFoundError(ERROR_POST_NOT_FOUND));
     }
 
-    const ids = post.images.map((image) => image.imageId);
+    const ids = post.images.map((image) => image.imageId!);
 
     const result = await this.fileServiceAdapter.getFilesInfo(ids);
     if (!result.isSuccess) {
@@ -57,9 +55,9 @@ export class PostQueryRepository {
 
     const posts = await this.prismaService.post.findMany({
       where: whereClause,
-      orderBy: { [query.sortField]: query.sortDirection },
-      skip: Number(query.skip),
-      take: Number(query.take) || undefined,
+      orderBy: { [query!.sortField!]: query!.sortDirection },
+      skip: Number(query!.skip),
+      take: Number(query!.take) || undefined,
       include: { images: true },
     });
 
@@ -68,7 +66,7 @@ export class PostQueryRepository {
     }
 
     const imageIds = posts.flatMap((post) =>
-      post.images.map((image) => image.imageId),
+      post.images.map((image) => image.imageId!),
     );
 
     const imagesData: Result<FileInfoResponse[]> =
@@ -81,7 +79,7 @@ export class PostQueryRepository {
     }
 
     mappedPostsView = posts.map((post) =>
-      ResponsePostDto.getView(post, imagesData.value),
+      ResponsePostDto.getView(post, imagesData.value!),
     );
 
     return Result.Ok(mappedPostsView);

@@ -14,7 +14,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
   'jwt-refresh',
 ) {
   constructor(
-    private jwtConfig: JwtConfig,
+    readonly jwtConfig: JwtConfig,
     private readonly deviceFacade: DeviceFacade,
   ) {
     super({
