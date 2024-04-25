@@ -16,4 +16,17 @@ export class EmailConfig {
         this.configService.get<boolean>('TECH_EMAIL_SECURE') ?? true,
     };
   }
+
+  get confirmRegisterLink(): string {
+    return (
+      this.configService.get<string>('FRONTEND_EMAIL_CONFIRMATION_URL') ?? ''
+    );
+  }
+  get confirmRecoveryPasswordLink(): string {
+    return (
+      this.configService.get<string>(
+        'FRONTEND_EMAIL_CONFIRMATION_PASSWORD_RECOVERY_URL',
+      ) ?? ''
+    );
+  }
 }

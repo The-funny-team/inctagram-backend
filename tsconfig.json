@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "nodenext",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -21,41 +21,21 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
-      // "src/*": ["./src/*"],
-      "@libs/*": ["libs/*"],
-      "@gateway/*": ["apps/gateway/*"],
-      "@fileService/*": ["apps/inctagram-upload-files/*"]
-
-      // "@src": [
-      //   "apps/gateway/src/"
-      // ],
-      // "@src/*": [
-      //   "apps/gateway/src/*"
-      // ],
-      // "@prisma": [
-      //   "apps/gateway/src/core/prisma"
-      // ],
-      // "@prisma/*": [
-      //   "apps/gateway/src/core/prisma/*"
-      // ],
-      // "@core": [
-      //   "apps/gateway/src/core/"
-      // ],
-      // "@core/*": [
-      //   "apps/gateway/src/core/*"
-      // ],
-      // "@auth": [
-      //   "apps/gateway/src/features/auth/"
-      // ],
-      // "@auth/*": [
-      //   "apps/gateway/src/features/auth/*"
-      // ],
-      // "@user": [
-      //   "apps/gateway/src/features/user/"
-      // ],
-      // "@user/*": [
-      //   "apps/gateway/src/features/user/*"
-      // ],
+      "@libs/*": [
+        "libs/*"
+      ],
+      "@gateway/*": [
+        "apps/gateway/*"
+      ],
+      "@fileService/*": [
+        "apps/inctagram-upload-files/*"
+      ],
+      "@app/core": [
+        "libs/core/src"
+      ],
+      "@app/core/*": [
+        "libs/core/src/*"
+      ]
     }
   }
 }
