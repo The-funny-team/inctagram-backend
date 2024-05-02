@@ -22,10 +22,12 @@
     "start:dev:notifier": "cross-env NODE_ENV=development nest start notifier --debug --watch",
     "start:debug": "nest start --debug --watch",
     "eslint:libs:check": "eslint \"libs/**/*.ts\"",
+    "eslint:libs:fix": "eslint \"libs/**/*.ts\" --fix",
     "eslint:gateway:check": "eslint \"apps/gateway/**/*.ts\"",
     "eslint:files:check": "eslint \"apps/inctagram-upload-files/**/*.ts\"",
     "eslint:gateway:fix": "eslint \"apps/gateway/**/*.ts\" --fix",
     "format:libs:check": "prettier --check \"libs/**/*.ts\"",
+    "format:libs:fix": "prettier --write \"libs/**/*.ts\"",
     "format:gateway:check": "prettier --check \"apps/gateway/**/*.ts\"",
     "format:files:check": "prettier --check \"apps/inctagram-upload-files/**/*.ts\"",
     "format:gateway:fix": "prettier --write \"apps/gateway/**/*.ts\"",
@@ -157,10 +159,9 @@
     ],
     "moduleNameMapper": {
       "^@gateway/(.*)$": "<rootDir>/apps/gateway/$1",
-      "^@libs/(.*)$": ".<rootDir>/libs/$1",
-      "^@fileService/(.*)$": "<rootDir>/apps/inctagram/$1",
       "^libs/core(|/.*)$": "<rootDir>/libs/core/src/$1",
-      "^app/core(|/.*)$": "<rootDir>/libs/core/src/$1"
+      "^@libs/(.*)$": "<rootDir>/libs/$1",
+      "^@fileService/(.*)$": "<rootDir>/apps/inctagram-upload-files/$1"
     },
     "testTimeout": 15000
   },

@@ -16,7 +16,8 @@
   ],
   "moduleNameMapper": {
     "^@gateway/(.*)$": "<rootDir>/$1",
-    "^@libs/(.*)$": ".<rootDir>/../../libs/$1"
+    "^@libs/(.*)$": ".<rootDir>/../../libs/$1",
+    "^@app/core/(.*)$": ".<rootDir>/../../libs/core/$1"
   },
   "testTimeout": 15000
 }

@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@gateway/src/app.module';
 import { EmailManagerModule } from '@gateway/src/core/email-manager/email-manager.module';
-import { EmailAdapter } from '@gateway/src/infrastructure';
 import { AuthTestHelper } from '@gateway/test/e2e.tests/testHelpers/auth.test.helper';
 import {
   findUUIDv4,
@@ -16,6 +15,7 @@ import { BadGatewayError, FileServiceAdapter, Result } from '@gateway/src/core';
 import { Post } from '@prisma/client';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { ERROR_GET_URLS_FILES } from '@gateway/src/core/adapters/fileService/fileService.constants';
+import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
 
 jest.setTimeout(15000);
 
@@ -27,7 +27,8 @@ describe('PostController (e2e) test', () => {
   const posts: Post[] = [];
 
   const emailAdapterMock = {
-    sendEmail: jest.fn(),
+    sendEmailConfirmationCode: jest.fn(),
+    sendRecoveryPasswordTempCode: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -70,10 +71,10 @@ describe('PostController (e2e) test', () => {
       await authTestHelper.registrationUser(userDto);
       await new Promise((pause) => setTimeout(pause, 100));
 
-      const mock = emailAdapterMock.sendEmail.mock;
+      const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
       const lastMockCall = mock.calls.length - 1;
 
-      const message = mock.calls[lastMockCall][2];
+      const message = mock.calls[lastMockCall][0].token;
       const codeConfirmation = findUUIDv4(message);
 
       await authTestHelper.confirmRegistration({ code: codeConfirmation });
@@ -93,10 +94,10 @@ describe('PostController (e2e) test', () => {
       await authTestHelper.registrationUser(userDto);
       await new Promise((pause) => setTimeout(pause, 100));
 
-      const mock = emailAdapterMock.sendEmail.mock;
+      const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
       const lastMockCall = mock.calls.length - 1;
 
-      const message = mock.calls[lastMockCall][2];
+      const message = mock.calls[lastMockCall][0].token;
       const codeConfirmation = findUUIDv4(message);
 
       await authTestHelper.confirmRegistration({ code: codeConfirmation });

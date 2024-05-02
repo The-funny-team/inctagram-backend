@@ -2,14 +2,15 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { EmailManagerModule } from '../../src/core/email-manager/email-manager.module';
 import { AppModule } from '../../src/app.module';
-import { EmailAdapter } from '../../src/infrastructure';
 import { getAppForE2ETesting } from '../e2e.tests/utils/tests.utils';
+import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
 
 describe('Auth.integration', () => {
   let app: INestApplication;
 
   const emailAdapterMock = {
-    sendEmail: jest.fn(),
+    sendEmailConfirmationCode: jest.fn(),
+    sendRecoveryPasswordTempCode: jest.fn(),
   };
 
   beforeAll(async () => {

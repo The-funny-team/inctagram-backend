@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import { EmailManagerModule } from '../../src/core/email-manager/email-manager.module';
-import { EmailAdapter } from '../../src/infrastructure';
 import { AuthTestHelper } from './testHelpers/auth.test.helper';
 import { getAppForE2ETesting, randomString } from './utils/tests.utils';
 import { UserTestHelper } from './testHelpers/user.test.helper';
@@ -11,6 +10,7 @@ import { CreateUserDto } from '@gateway/src/features/user/dto';
 import { endpoints } from '@gateway/src/features/user/api/user.controller';
 import { subYears } from 'date-fns';
 import { LoginDto } from '@gateway/src/features/auth/dto/login.dto';
+import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
 
 jest.setTimeout(15000);
 
@@ -25,7 +25,8 @@ describe('UserController (e2e) test', () => {
   let loginDto: LoginDto;
 
   const emailAdapterMock = {
-    sendEmail: jest.fn(),
+    sendEmailConfirmationCode: jest.fn(),
+    sendRecoveryPasswordTempCode: jest.fn(),
   };
 
   beforeAll(async () => {

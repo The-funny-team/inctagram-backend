@@ -5,7 +5,6 @@ import { AppConfig } from '../config/application';
 import { EmailAdapter } from './email.adapter';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AppConfigModule } from '@app/core/config/appConfigModule';
 import { MicroservicesEnum } from '@libs/types/microservices.enum';
 import { ConfigService } from '@nestjs/config';
 
@@ -15,12 +14,12 @@ import { ConfigService } from '@nestjs/config';
     ClientsModule.registerAsync([
       {
         name: MicroservicesEnum.NOTIFIER_SERVICE,
-        imports: [AppConfigModule],
+        imports: [],
         useFactory: (configService: ConfigService) => {
           return {
             transport: Transport.RMQ,
             options: {
-              urls: configService.get('RMQ_URLS').split(', '),
+              urls: configService.get('RMQ_URLS')?.split(', ') ?? [],
             },
           };
         },

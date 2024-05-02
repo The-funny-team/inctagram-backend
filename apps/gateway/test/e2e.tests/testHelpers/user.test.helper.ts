@@ -14,17 +14,17 @@ export class UserTestHelper {
   async createRegisteredAndVerifiedUser(
     newUserData: CreateUserDto,
     authTestHelper: AuthTestHelper,
-    emailAdapterMock: { sendEmail: jest.Mock },
+    emailAdapterMock: { sendEmailConfirmationCode: jest.Mock },
   ): Promise<ResponseUserDto> {
     const { body } = await authTestHelper.registrationUser(newUserData);
     const user: ResponseUserDto = body;
 
     await new Promise((pause) => setTimeout(pause, 100));
-    const mock = emailAdapterMock.sendEmail.mock;
+    const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
     const lastMockCall = mock.calls.length - 1;
-    expect(mock.calls[lastMockCall][0]).toBe(newUserData.email);
-
-    const message = mock.calls[lastMockCall][2];
+    expect(mock.calls[lastMockCall][0].email).toBe(newUserData.email);
+    console.log('mock.calls[lastMockCall]', mock.calls[lastMockCall]);
+    const message = mock.calls[lastMockCall][0].token;
     const codeConfirmation = findUUIDv4(message);
     await authTestHelper.confirmRegistration({ code: codeConfirmation });
 
