@@ -23,7 +23,7 @@ export class UserTestHelper {
     const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
     const lastMockCall = mock.calls.length - 1;
     expect(mock.calls[lastMockCall][0].email).toBe(newUserData.email);
-    console.log('mock.calls[lastMockCall]', mock.calls[lastMockCall]);
+
     const message = mock.calls[lastMockCall][0].token;
     const codeConfirmation = findUUIDv4(message);
     await authTestHelper.confirmRegistration({ code: codeConfirmation });

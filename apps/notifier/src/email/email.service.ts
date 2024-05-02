@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EmailSenderService } from './email-sender.service';
-import { type SendEmailDto } from '@libs/contracts/email/send-confirmation-email-code';
+import { type SendEmailDto } from '@libs/contracts/email/send-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Template } from './templates';
 import { EmailConfig } from '../config';

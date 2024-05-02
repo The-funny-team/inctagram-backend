@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { MicroservicesEnum } from '@libs/types/microservices.enum';
 import { ClientProxy } from '@nestjs/microservices';
-import { SendEmailDto } from '@libs/contracts/email/send-confirmation-email-code';
+import { SendEmailDto } from '@libs/contracts/email/send-email.dto';
 
 @Injectable()
 export class EmailAdapter {

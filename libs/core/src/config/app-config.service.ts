@@ -32,6 +32,6 @@ export class AppConfigService {
   }
 
   get rmqUrls(): string[] {
-    return this.configService.get('RMQ_URLS').split(', ') ?? [];
+    return this.configService.get('RMQ_URLS')?.split(', ') ?? [];
   }
 }

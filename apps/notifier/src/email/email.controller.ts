@@ -1,27 +1,19 @@
 import { Controller } from '@nestjs/common';
-import { Ctx, EventPattern, MqttContext, Payload } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import { EmailService } from './email.service';
-import { SendEmailDto } from '@libs/contracts/email/send-confirmation-email-code';
+import { SendEmailDto } from '@libs/contracts/email/send-email.dto';
 
 @Controller()
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
   @EventPattern({ cmd: 'email-notification', type: 'confirmation' })
-  async sendConfirmation(
-    @Payload() data: SendEmailDto,
-    @Ctx() _context: MqttContext,
-  ): Promise<void> {
-    console.log(data);
+  async sendConfirmation(@Payload() data: SendEmailDto): Promise<void> {
     await this.emailService.sendConfirmToken(data);
   }
 
   @EventPattern({ cmd: 'email-notification', type: 'recovery' })
-  async sendRecovery(
-    @Payload() data: SendEmailDto,
-    @Ctx() _context: MqttContext,
-  ): Promise<void> {
-    console.log(data);
+  async sendRecovery(@Payload() data: SendEmailDto): Promise<void> {
     await this.emailService.sendRecoveryToken(data);
   }
 }
