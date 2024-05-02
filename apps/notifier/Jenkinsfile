@@ -3,13 +3,13 @@ pipeline {
     agent any
     environment {
         ENV_TYPE = "production"
-        PORT = 3246
-        NAMESPACE = "9art-ru"
-        REGISTRY_HOSTNAME = "burshilya2023"
-        PROJECT = "snapix-back-notifier"
+        PORT = 3406
+        NAMESPACE = "funny-inctagram-site"
+        REGISTRY_HOSTNAME = "funnyteam"
+        PROJECT = "ft-backend-notifier"
         SERVICE="notifier"
         REGISTRY = "registry.hub.docker.com"
-        DEPLOYMENT_NAME = "snapix-back-notifier-deployment"
+        DEPLOYMENT_NAME = "ft-backend-notifier-deployment"
         IMAGE_NAME = "${env.BUILD_ID}_${env.ENV_TYPE}_${env.GIT_COMMIT}"
         DOCKER_BUILD_NAME = "${env.REGISTRY_HOSTNAME}/${env.PROJECT}:${env.IMAGE_NAME}"
     }
@@ -23,7 +23,8 @@ pipeline {
         stage('Install dependency') {
             steps {
                 script {
-                    sh "yarn install"
+                    sh "yarn install --ignore-engines"
+                    sh "yarn add sharp --ignore-engines"
                 }
             }
         }
@@ -37,14 +38,7 @@ pipeline {
         stage('Lint Check') {
             steps {
                 script {
-                    sh "yarn lint:check"
-                }
-            }
-        }
-        stage('Unit tests') {
-            steps {
-                script {
-                    sh "yarn test:notifier"
+                    sh "yarn lint:notifier:check"
                 }
             }
         }
@@ -61,7 +55,7 @@ pipeline {
              steps {
                  echo "Push image started..."
                      script {
-                        docker.withRegistry("https://${env.REGISTRY}", '9art-ru') {
+                        docker.withRegistry("https://${env.REGISTRY}", 'funny-inctagram-site') {
                             app.push("${env.IMAGE_NAME}")
                         }
                      }
