@@ -19,7 +19,7 @@ export class EmailSenderService {
   ) {
     try {
       const info = await this.send({
-        from: '"9ART.ru 👻" <info@9art.ru>',
+        from: '"The Funny Team © 👻" <info@funny-inctagram.site>',
         to: emailTo,
         subject,
         template,

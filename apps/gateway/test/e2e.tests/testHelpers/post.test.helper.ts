@@ -56,15 +56,11 @@ export class PostTestHelper {
   async getPosts(query?: PostQueryDto, config: { expectedCode?: number } = {}) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
 
-    const builder = request(this.app.getHttpServer()).get(
-      this.globalPrefix + '/public/post',
-    );
-
-    if (query) {
-      builder.query(query);
-    }
-
-    return builder.send().expect(expectedCode);
+    return request(this.app.getHttpServer())
+      .get(this.globalPrefix + '/public/post')
+      .query(query || {})
+      .send()
+      .expect(expectedCode);
   }
   async getPostById(id: string, config: { expectedCode?: number } = {}) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
