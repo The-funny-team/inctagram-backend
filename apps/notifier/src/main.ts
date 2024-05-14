@@ -22,7 +22,8 @@ async function bootstrap() {
     },
   });
 
-  app.setGlobalPrefix(configService.get('GLOBAL_PREFIX', 'api/v1'));
+  // fixme: This global prefix is not working
+  // app.setGlobalPrefix(configService.get('GLOBAL_PREFIX', 'api/v1'));
 
   await app.startAllMicroservices();
   logger.log('Microservice Notifier is running');
