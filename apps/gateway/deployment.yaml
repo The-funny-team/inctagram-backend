@@ -87,6 +87,11 @@ spec:
                  secretKeyRef:
                    name: gateway-production-config-secret
                    key: FRONTEND_EMAIL_CONFIRMATION_PASSWORD_RECOVERY_URL
+             - name: RMQ_URLS
+               valueFrom:
+                 secretKeyRef:
+                   name: gateway-production-config-secret
+                   key: RMQ_URLS
              - name: DATABASE_URL
                valueFrom:
                  secretKeyRef:

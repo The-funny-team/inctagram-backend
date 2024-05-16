@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@gateway/src/app.module';
 import { EmailManagerModule } from '@gateway/src/core/email-manager/email-manager.module';
-import { EmailAdapter } from '@gateway/src/infrastructure';
 import { AuthTestHelper } from '@gateway/test/e2e.tests/testHelpers/auth.test.helper';
 import {
   findUUIDv4,
@@ -21,6 +20,7 @@ import {
   ERROR_PASSWORDS_MUST_MATCH,
 } from '@gateway/src/features/user/user.constants';
 import { LoginDto } from '@gateway/src/features/auth/dto/login.dto';
+import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
 
 jest.setTimeout(15000);
 
@@ -31,7 +31,8 @@ describe('AuthController (e2e) test', () => {
   let authTestHelper: AuthTestHelper;
 
   const emailAdapterMock = {
-    sendEmail: jest.fn(),
+    sendEmailConfirmationCode: jest.fn(),
+    sendRecoveryPasswordTempCode: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -82,8 +83,10 @@ describe('AuthController (e2e) test', () => {
 
       await new Promise((pause) => setTimeout(pause, 100));
 
-      expect(emailAdapterMock.sendEmail).toHaveBeenCalled();
-      expect(emailAdapterMock.sendEmail.mock.calls[0][0]).toBe(userDto.email);
+      expect(emailAdapterMock.sendEmailConfirmationCode).toHaveBeenCalled();
+      expect(
+        emailAdapterMock.sendEmailConfirmationCode.mock.calls[0][0].email,
+      ).toBe(userDto.email);
     });
     it(`${endpoints.registration()} (POST) - registration the user incorrect username'`, async () => {
       const userDto = authTestHelper.userDto();
@@ -199,10 +202,10 @@ describe('AuthController (e2e) test', () => {
 
       await new Promise((pause) => setTimeout(pause, 100));
 
-      expect(emailAdapterMock.sendEmail).toHaveBeenCalled();
-      const mock = emailAdapterMock.sendEmail.mock;
+      expect(emailAdapterMock.sendEmailConfirmationCode).toHaveBeenCalled();
+      const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
       const callWithCurrentEmail = mock.calls.filter((call) => {
-        return call[0] === userDto.email;
+        return call[0].email === userDto.email;
       });
       expect(callWithCurrentEmail.length).toBe(1);
     });
@@ -215,12 +218,12 @@ describe('AuthController (e2e) test', () => {
       await authTestHelper.registrationUser(userDto);
       await new Promise((pause) => setTimeout(pause, 100));
 
-      expect(emailAdapterMock.sendEmail).toHaveBeenCalled();
-      const mock = emailAdapterMock.sendEmail.mock;
+      expect(emailAdapterMock.sendEmailConfirmationCode).toHaveBeenCalled();
+      const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
       const lastMockCall = mock.calls.length - 1;
-      expect(mock.calls[lastMockCall][0]).toBe(userDto.email);
+      expect(mock.calls[lastMockCall][0].email).toBe(userDto.email);
 
-      const message = mock.calls[lastMockCall][2];
+      const message = mock.calls[lastMockCall][0].token;
       const codeConfirmation = findUUIDv4(message);
 
       expect(codeConfirmation.length).not.toBe(0);
@@ -244,12 +247,14 @@ describe('AuthController (e2e) test', () => {
 
       await new Promise((pause) => setTimeout(pause, 100));
 
-      expect(emailAdapterMock.sendEmail).toHaveBeenCalled();
-      expect(emailAdapterMock.sendEmail.mock.lastCall[0]).toBe(userDto.email);
+      expect(emailAdapterMock.sendEmailConfirmationCode).toHaveBeenCalled();
+      expect(
+        emailAdapterMock.sendEmailConfirmationCode.mock.lastCall[0].email,
+      ).toBe(userDto.email);
 
-      const mock = emailAdapterMock.sendEmail.mock;
+      const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
       const callWithCurrentEmail = mock.calls.filter((call) => {
-        return call[0] === userDto.email;
+        return call[0].email === userDto.email;
       });
       expect(callWithCurrentEmail.length).toBe(2);
     });
@@ -266,10 +271,10 @@ describe('AuthController (e2e) test', () => {
       await authTestHelper.registrationUser(userDto);
       await new Promise((pause) => setTimeout(pause, 100));
 
-      const mock = emailAdapterMock.sendEmail.mock;
+      const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
       const lastMockCall = mock.calls.length - 1;
 
-      const message = mock.calls[lastMockCall][2];
+      const message = mock.calls[lastMockCall][0].token;
       const codeConfirmation = findUUIDv4(message);
 
       await authTestHelper.confirmRegistration({ code: codeConfirmation });
@@ -290,8 +295,8 @@ describe('AuthController (e2e) test', () => {
     it(`${endpoints.newRefreshToken} (POST) Should NOT get new token 
     pairs with old refresh token`, async () => {
       const tokenPairs = await authTestHelper.newRefreshToken(
-        oldRefreshToken,
-        deviceName,
+        oldRefreshToken!,
+        deviceName!,
         {
           expectedCode: 401,
         },

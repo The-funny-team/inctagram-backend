@@ -8,7 +8,17 @@
     ],
     "deleteOutDir": true,
     "webpack": false,
-    "tsConfigPath": "apps/gateway/tsconfig.app.json"
+    "tsConfigPath": "apps/gateway/tsconfig.app.json",
+    "assets": [
+      {
+        "include": "**/*.hbs",
+        "watchAssets": true
+      },
+      {
+        "include": "**/assets/**/*.jpeg",
+        "watchAssets": true
+      }
+    ]
   },
   "monorepo": true,
   "root": "apps/",
@@ -38,6 +48,24 @@
       "sourceRoot": "apps/inctagram-upload-files/src",
       "compilerOptions": {
         "tsConfigPath": "apps/inctagram-upload-files/tsconfig.app.json"
+      }
+    },
+    "notifier": {
+      "type": "application",
+      "root": "apps/notifier",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifier/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifier/tsconfig.app.json"
+      }
+    },
+    "core": {
+      "type": "library",
+      "root": "libs/core",
+      "entryFile": "index",
+      "sourceRoot": "libs/core/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
     }
   }

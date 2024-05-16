@@ -12,6 +12,7 @@ import {
   ERROR_POST_NOT_FOUND,
 } from '@gateway/src/features/post/post.constants';
 import { PostRepository } from '@gateway/src/features/post/db/post.repository';
+import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
 
 describe('DeletePostUseCase', () => {
   let module: TestingModule;
@@ -22,10 +23,18 @@ describe('DeletePostUseCase', () => {
   let postRepo: PostRepository;
   let fileServiceClient: any;
 
+  const emailAdapterMock = {
+    sendEmailConfirmationCode: jest.fn(),
+    sendRecoveryPasswordTempCode: jest.fn(),
+  };
+
   beforeEach(async () => {
     module = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(EmailAdapter)
+      .useValue(emailAdapterMock)
+      .compile();
 
     prismaService = module.get<PrismaService>(PrismaService);
     useCase = module.get<DeletePostUseCase>(DeletePostUseCase);

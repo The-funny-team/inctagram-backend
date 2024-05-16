@@ -23,8 +23,8 @@ export class PostTestHelper {
   }
 
   async createPost(
-    accessToken,
-    createPostDto,
+    accessToken: string,
+    createPostDto: any,
     config: {
       expectedCode?: number;
     } = {},
@@ -38,7 +38,7 @@ export class PostTestHelper {
       .expect(expectedCode);
   }
   async deletePost(
-    accessToken,
+    accessToken: string,
     postId: string,
     config: {
       expectedCode?: number;
@@ -58,11 +58,11 @@ export class PostTestHelper {
 
     return request(this.app.getHttpServer())
       .get(this.globalPrefix + '/public/post')
-      .query(query)
+      .query(query || {})
       .send()
       .expect(expectedCode);
   }
-  async getPostById(id, config: { expectedCode?: number } = {}) {
+  async getPostById(id: string, config: { expectedCode?: number } = {}) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
 
     return request(this.app.getHttpServer())
