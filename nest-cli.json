@@ -41,13 +41,13 @@
         "tsConfigPath": "apps/inctagram-subscription/tsconfig.app.json"
       }
     },
-    "inctagram-upload-files": {
+    "storage": {
       "type": "application",
-      "root": "apps/inctagram-upload-files",
+      "root": "apps/storage",
       "entryFile": "main",
-      "sourceRoot": "apps/inctagram-upload-files/src",
+      "sourceRoot": "apps/storage/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/inctagram-upload-files/tsconfig.app.json"
+        "tsConfigPath": "apps/storage/tsconfig.app.json"
       }
     },
     "notifier": {

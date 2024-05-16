@@ -1,4 +1,4 @@
-name: Files Test & Lint
+name: Storage Test & Lint
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         run: yarn install
 
       - name: Test
-        run: yarn test:files
+        run: yarn test:storage
 
   tests-e2e:
     name: E2E Tests
@@ -40,7 +40,7 @@ jobs:
         run: yarn install
 
       - name: Test
-        run: yarn test:files:e2e
+        run: yarn test:storage:e2e
 
   tsc:
     name: Typescript Check
@@ -56,7 +56,7 @@ jobs:
         run: yarn install
 
       - name: TSC
-        run: yarn tsc:files:check
+        run: yarn tsc:storage:check
 
   lint:
     name: Lint
@@ -73,4 +73,4 @@ jobs:
         run: yarn install
 
       - name: Lint Main
-        run: yarn lint:files:check
+        run: yarn lint:storage:check

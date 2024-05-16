@@ -10,7 +10,7 @@
     "^@gateway/(.*)$": "<rootDir>/$1",
     "^@app/core/(.*)$": "<rootDir>/../../libs/core/src/$1",
     "^@libs/(.*)$": "<rootDir>/../../libs/$1",
-    "^@fileService/(.*)$": "<rootDir>/../inctagram-upload-files/$1"
+    "^@fileService/(.*)$": "<rootDir>/../storage/$1"
 
   },
   "testTimeout": 15000
