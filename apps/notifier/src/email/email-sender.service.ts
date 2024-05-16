@@ -28,7 +28,7 @@ export class EmailSenderService {
 
       this.logger.log('Message sent: %s', info);
     } catch (e) {
-      this.logger.error(`Email isn't send. Error: ${JSON.stringify(e)}`);
+      this.logger.error(`Failed to send email to ${emailTo}. Error: ${JSON.stringify(e)}`);
     }
   }
 }
