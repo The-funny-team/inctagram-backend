@@ -28,7 +28,7 @@
         "apps/gateway/*"
       ],
       "@fileService/*": [
-        "apps/inctagram-upload-files/*"
+        "apps/storage/*"
       ],
       "@app/core": [
         "libs/core/src"

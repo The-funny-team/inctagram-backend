@@ -20,7 +20,6 @@ WORKDIR /home/node/dist/${SERVICE}
 
 
 COPY --chown=node package*.json ./
-COPY --chown=node yarn.lock ./
 
 RUN yarn install
 
@@ -33,4 +32,4 @@ RUN yarn build:${SERVICE}
 
 EXPOSE ${PORT}
 
-CMD yarn 'start:inctagram-upload-files'
+CMD yarn 'start:storage'
