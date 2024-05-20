@@ -32,15 +32,6 @@
         "tsConfigPath": "apps/gateway/tsconfig.app.json"
       }
     },
-    "subscription-app": {
-      "type": "application",
-      "root": "apps/inctagram-subscription",
-      "entryFile": "main",
-      "sourceRoot": "apps/inctagram-subscription/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/inctagram-subscription/tsconfig.app.json"
-      }
-    },
     "storage": {
       "type": "application",
       "root": "apps/storage",
