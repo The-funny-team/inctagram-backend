@@ -35,6 +35,21 @@ export class PublicPostController {
     return posts.value;
   }
 
+  @GetPostsViewSwaggerDecorator()
+  @Get('/user/:id/')
+  async getUserPosts(
+    @Query() query: PostQueryDto,
+    @Param('id') userId: string,
+  ) {
+    const posts = await this.postQueryRepo.getPosts(query, userId);
+    console.log(posts);
+    if (!posts.isSuccess) {
+      throw new NotFoundError(ERROR_POST_NOT_FOUND);
+    }
+
+    return posts.value;
+  }
+
   @GetPostViewSwaggerDecorator()
   @Get(':id')
   async getPost(@Param('id') postId: string): Promise<ResponsePostDto> {

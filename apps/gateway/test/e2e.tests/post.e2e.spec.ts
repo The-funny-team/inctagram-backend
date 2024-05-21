@@ -10,19 +10,23 @@ import {
 
 import { LoginDto } from '@gateway/src/features/auth/dto/login.dto';
 import { endpoints } from '@gateway/src/features/post/api/post.controller';
-import { PostTestHelper } from '@gateway/test/e2e.tests/testHelpers/post.test.helper';
+import {
+  IPostTestHelper,
+  PostTestHelper,
+} from '@gateway/test/e2e.tests/testHelpers/post.test.helper';
 import { BadGatewayError, FileServiceAdapter, Result } from '@gateway/src/core';
 import { Post } from '@prisma/client';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { ERROR_GET_URLS_FILES } from '@gateway/src/core/adapters/fileService/fileService.constants';
 import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
+import { randomUUID } from 'crypto';
 
 jest.setTimeout(15000);
 
 describe('PostController (e2e) test', () => {
   let app: INestApplication;
   let authTestHelper: AuthTestHelper;
-  let postTestHelper: PostTestHelper;
+  let postTestHelper: IPostTestHelper;
   let fileServiceAdapter: FileServiceAdapter;
   const posts: Post[] = [];
 
@@ -189,6 +193,36 @@ describe('PostController (e2e) test', () => {
       const posts = await postTestHelper.getPosts();
 
       expect(posts.body.length).not.toBe(4);
+    });
+
+    it('should get all created posts by user id', async () => {
+      jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
+        Result.Ok([
+          {
+            ownerId: post.id,
+            url: 'url',
+          },
+        ]) as any,
+      );
+
+      const posts = await postTestHelper.getPosts({}, post.authorId);
+
+      expect(posts.body.length).not.toBe(4);
+    });
+
+    it('should get error if get posts by invalid user id', async () => {
+      jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
+        Result.Ok([
+          {
+            ownerId: post.id,
+            url: 'url',
+          },
+        ]) as any,
+      );
+
+      await postTestHelper.getPosts({}, randomUUID(), {
+        expectedCode: HttpStatus.NOT_FOUND,
+      });
     });
 
     it('should get last 4 created posts without image data', async () => {

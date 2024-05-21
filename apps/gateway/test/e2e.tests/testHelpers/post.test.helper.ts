@@ -5,8 +5,42 @@ import { CreatePostDto } from '@gateway/src/features/post/dto/createPost.dto';
 import { endpoints } from '@gateway/src/features/post/api/post.controller';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 
-export class PostTestHelper {
+export interface IPostTestHelper {
+  postDto(): CreatePostDto;
+
+  createPost(
+    accessToken: string,
+    createPostDto: any,
+    config: {
+      expectedCode?: number;
+    },
+  ): Promise<any>;
+
+  deletePost(
+    accessToken: string,
+    postId: string,
+    config: {
+      expectedCode?: number;
+    },
+  ): Promise<any>;
+
+  getPosts(
+    query?: PostQueryDto,
+    config?: { expectedCode?: number },
+  ): Promise<any>;
+
+  getPosts(
+    query?: PostQueryDto,
+    userId?: string,
+    config?: { expectedCode?: number },
+  ): Promise<any>;
+
+  getPostById(id: string, config?: { expectedCode?: number }): Promise<any>;
+}
+
+export class PostTestHelper implements IPostTestHelper {
   globalPrefix = getGlobalPrefix();
+
   constructor(private app: INestApplication) {}
 
   postDto(): CreatePostDto {
@@ -37,6 +71,7 @@ export class PostTestHelper {
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(expectedCode);
   }
+
   async deletePost(
     accessToken: string,
     postId: string,
@@ -53,15 +88,37 @@ export class PostTestHelper {
       .expect(expectedCode);
   }
 
-  async getPosts(query?: PostQueryDto, config: { expectedCode?: number } = {}) {
-    const expectedCode = config.expectedCode ?? HttpStatus.OK;
+  async getPosts(
+    query?: PostQueryDto,
+    userIdOrConfig: string | { expectedCode?: number } = {},
+    config: { expectedCode?: number } = {},
+  ) {
+    let expectedCode: number = HttpStatus.OK;
+    let userId: string | null = null;
+
+    if (typeof userIdOrConfig === 'string') {
+      if (config !== undefined && config.expectedCode) {
+        expectedCode = config.expectedCode;
+      }
+
+      userId = userIdOrConfig;
+    } else if (
+      typeof userIdOrConfig === 'object' &&
+      config === undefined &&
+      userIdOrConfig.expectedCode
+    ) {
+      expectedCode = userIdOrConfig.expectedCode;
+    }
 
     return request(this.app.getHttpServer())
-      .get(this.globalPrefix + '/public/post')
+      .get(
+        this.globalPrefix + '/public/post' + (userId ? `/user/${userId}` : ''),
+      )
       .query(query || {})
       .send()
       .expect(expectedCode);
   }
+
   async getPostById(id: string, config: { expectedCode?: number } = {}) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
 
