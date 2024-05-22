@@ -93,22 +93,7 @@ export class PostTestHelper implements IPostTestHelper {
     userIdOrConfig: string | { expectedCode?: number } = {},
     config: { expectedCode?: number } = {},
   ) {
-    let expectedCode: number = HttpStatus.OK;
-    let userId: string | null = null;
-
-    if (typeof userIdOrConfig === 'string') {
-      if (config !== undefined && config.expectedCode) {
-        expectedCode = config.expectedCode;
-      }
-
-      userId = userIdOrConfig;
-    } else if (
-      typeof userIdOrConfig === 'object' &&
-      config === undefined &&
-      userIdOrConfig.expectedCode
-    ) {
-      expectedCode = userIdOrConfig.expectedCode;
-    }
+    const { expectedCode, userId } = this.parseParams(userIdOrConfig, config);
 
     return request(this.app.getHttpServer())
       .get(
@@ -117,6 +102,23 @@ export class PostTestHelper implements IPostTestHelper {
       .query(query || {})
       .send()
       .expect(expectedCode);
+  }
+
+  private parseParams(
+    userIdOrConfig: string | { expectedCode?: number },
+    config: { expectedCode?: number },
+  ) {
+    let expectedCode = HttpStatus.OK;
+    let userId = null;
+
+    if (typeof userIdOrConfig === 'string') {
+      userId = userIdOrConfig;
+      expectedCode = config?.expectedCode ?? HttpStatus.OK;
+    } else if (userIdOrConfig && typeof userIdOrConfig === 'object') {
+      expectedCode = userIdOrConfig.expectedCode ?? HttpStatus.OK;
+    }
+
+    return { expectedCode, userId };
   }
 
   async getPostById(id: string, config: { expectedCode?: number } = {}) {
