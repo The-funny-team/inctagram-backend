@@ -1,43 +1,62 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/inctagram-gateway/src",
+  "sourceRoot": "apps/gateway/src",
   "compilerOptions": {
     "plugins": [
       "@nestjs/swagger"
     ],
     "deleteOutDir": true,
     "webpack": false,
-    "tsConfigPath": "apps/inctagram-gateway/tsconfig.app.json"
+    "tsConfigPath": "apps/gateway/tsconfig.app.json",
+    "assets": [
+      {
+        "include": "**/*.hbs",
+        "watchAssets": true
+      },
+      {
+        "include": "**/assets/**/*.jpeg",
+        "watchAssets": true
+      }
+    ]
   },
   "monorepo": true,
   "root": "apps/",
   "projects": {
-    "inctagram-backend": {
+    "gateway": {
       "type": "application",
-      "root": "apps/inctagram-gateway",
+      "root": "apps/gateway",
       "entryFile": "main",
-      "sourceRoot": "apps/inctagram-gateway/src",
+      "sourceRoot": "apps/gateway/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/inctagram-gateway/tsconfig.app.json"
+        "tsConfigPath": "apps/gateway/tsconfig.app.json"
       }
     },
-    "subscription-app": {
+    "storage": {
       "type": "application",
-      "root": "apps/inctagram-subscription",
+      "root": "apps/storage",
       "entryFile": "main",
-      "sourceRoot": "apps/inctagram-subscription/src",
+      "sourceRoot": "apps/storage/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/inctagram-subscription/tsconfig.app.json"
+        "tsConfigPath": "apps/storage/tsconfig.app.json"
       }
     },
-    "inctagram-upload-files": {
+    "notifier": {
       "type": "application",
-      "root": "apps/inctagram-upload-files",
+      "root": "apps/notifier",
       "entryFile": "main",
-      "sourceRoot": "apps/inctagram-upload-files/src",
+      "sourceRoot": "apps/notifier/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/inctagram-upload-files/tsconfig.app.json"
+        "tsConfigPath": "apps/notifier/tsconfig.app.json"
+      }
+    },
+    "core": {
+      "type": "library",
+      "root": "libs/core",
+      "entryFile": "index",
+      "sourceRoot": "libs/core/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
     }
   }

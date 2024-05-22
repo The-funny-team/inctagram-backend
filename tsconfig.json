@@ -1,59 +1,41 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "nodenext",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
+    "target": "ESNext",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "esModuleInterop": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "paths": {
-      // "src/*": ["./src/*"],
-      "@libs/*": ["libs/*"],
-      "@gateway/*": ["apps/inctagram-gateway/*"],
-      "@fileService/*": ["apps/inctagram-upload-files/*"],
-
-      // "@src": [
-      //   "apps/inctagram-gateway/src/"
-      // ],
-      // "@src/*": [
-      //   "apps/inctagram-gateway/src/*"
-      // ],
-      // "@prisma": [
-      //   "apps/inctagram-gateway/src/core/prisma"
-      // ],
-      // "@prisma/*": [
-      //   "apps/inctagram-gateway/src/core/prisma/*"
-      // ],
-      // "@core": [
-      //   "apps/inctagram-gateway/src/core/"
-      // ],
-      // "@core/*": [
-      //   "apps/inctagram-gateway/src/core/*"
-      // ],
-      // "@auth": [
-      //   "apps/inctagram-gateway/src/features/auth/"
-      // ],
-      // "@auth/*": [
-      //   "apps/inctagram-gateway/src/features/auth/*"
-      // ],
-      // "@user": [
-      //   "apps/inctagram-gateway/src/features/user/"
-      // ],
-      // "@user/*": [
-      //   "apps/inctagram-gateway/src/features/user/*"
-      // ],
+      "@libs/*": [
+        "libs/*"
+      ],
+      "@gateway/*": [
+        "apps/gateway/*"
+      ],
+      "@fileService/*": [
+        "apps/storage/*"
+      ],
+      "@app/core": [
+        "libs/core/src"
+      ],
+      "@app/core/*": [
+        "libs/core/src/*"
+      ]
     }
   }
 }

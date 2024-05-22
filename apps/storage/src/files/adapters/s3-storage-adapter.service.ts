@@ -1,0 +1,91 @@
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  DeleteObjectCommand,
+  DeleteObjectsCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { FileUploadRequest } from '@libs/contracts';
+import { AmazonCloudBacketConfig } from '../config/yandex-cloud-backet.configuration';
+import { FileSaveResponse } from '../types/fileSave.response';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class S3StorageAdapter {
+  logger = new Logger(S3StorageAdapter.name);
+
+  private s3Client: S3Client;
+  private bucketName: string;
+  private settings;
+
+  constructor(readonly yandexCloudConfig: AmazonCloudBacketConfig) {
+    this.settings = yandexCloudConfig.getSettings();
+    this.bucketName = this.settings.AMAZON_CLOUD_BUCKET_NAME;
+
+    const REGION = 'eu-north-1';
+    this.s3Client = new S3Client({
+      region: REGION,
+      endpoint: this.settings.AMAZON_CLOUD_URL,
+      credentials: {
+        secretAccessKey: this.settings.AMAZON_CLOUD_SECRET_KEY,
+        accessKeyId: this.settings.AMAZON_CLOUD_KEY_ID,
+      },
+    });
+  }
+
+  async saveAvatar({
+    userId,
+    buffer,
+    format,
+    fileType,
+  }: FileUploadRequest): Promise<FileSaveResponse> {
+    const key = `content/${userId}/${fileType}/${uuidv4()}.${format}`;
+
+    const extractedBuffer = Buffer.from(buffer);
+
+    console.log('extractedBuffer', extractedBuffer);
+
+    const bucketParams = {
+      Bucket: this.bucketName,
+      Key: key,
+      Body: extractedBuffer,
+      ContentType: `image/${format}`,
+    };
+
+    const command = new PutObjectCommand(bucketParams);
+    try {
+      const uploadResult = await this.s3Client.send(command);
+      return {
+        url: key,
+        fileId: uploadResult.ETag!,
+      };
+    } catch (exception) {
+      this.logger.error(exception);
+      throw exception;
+    }
+  }
+
+  async deleteAvatar(key: string) {
+    const bucketParams = { Bucket: this.bucketName, Key: key };
+    try {
+      return await this.s3Client.send(new DeleteObjectCommand(bucketParams));
+    } catch (exception) {
+      this.logger.error(exception);
+      throw exception;
+    }
+  }
+
+  async deleteImages(keys: string[]) {
+    const objectsToDelete = keys.map((key) => ({ Key: key }));
+
+    const bucketParams = {
+      Bucket: this.bucketName,
+      Delete: { Objects: objectsToDelete },
+      Quiet: false,
+    };
+    return await this.s3Client.send(new DeleteObjectsCommand(bucketParams));
+  }
+  getUrlFile(url: string) {
+    return `${this.settings.AMAZON_CLOUD_URL_FILES}/${url}`;
+  }
+}
