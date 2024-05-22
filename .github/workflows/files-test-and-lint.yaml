@@ -3,7 +3,7 @@ name: Storage Test & Lint
 on:
   push:
     paths:
-      - apps/gateway/**
+      - apps/storage/**
       - .github/workflows/**
     branches-ignore:
       - release/**
