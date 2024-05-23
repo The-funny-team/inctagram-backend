@@ -131,9 +131,11 @@ describe('PostController (e2e) test', () => {
         );
 
         const createPostDto = postTestHelper.postDto();
+
         const createdPost = await postTestHelper.createPost(
           accessToken,
-          createPostDto,
+          // Проверка на пустое описание первово созданного поста
+          i === 0 ? { ...createPostDto, description: '' } : createPostDto,
           {
             expectedCode: HttpStatus.CREATED,
           },
