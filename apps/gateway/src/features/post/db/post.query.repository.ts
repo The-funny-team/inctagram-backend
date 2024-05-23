@@ -51,6 +51,14 @@ export class PostQueryRepository {
 
     if (userId) {
       whereClause.authorId = userId;
+
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return Result.Err(ERROR_POST_NOT_FOUND);
+      }
     }
 
     const posts = await this.prismaService.post.findMany({
@@ -62,7 +70,7 @@ export class PostQueryRepository {
     });
 
     if (!posts.length) {
-      return Result.Err(new NotFoundError(ERROR_POST_NOT_FOUND));
+      return Result.Ok([]);
     }
 
     const imageIds = posts.flatMap((post) =>
