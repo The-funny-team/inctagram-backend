@@ -60,7 +60,15 @@ export class UserRepository {
   ): Promise<CreatedUserWithRegistrationInfo | null> {
     return this.prismaService.user.findFirst({
       where: {
-        OR: [{ name: usernameOrEmail }, { email: usernameOrEmail }],
+        OR: [
+          { name: usernameOrEmail },
+          {
+            email: {
+              contains: usernameOrEmail,
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -73,8 +81,13 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    return this.prismaService.user.findUnique({
-      where: { email },
+    return this.prismaService.user.findFirst({
+      where: {
+        email: {
+          contains: email,
+          mode: 'insensitive',
+        },
+      },
       include: {
         userRegistrationInfo: { select: { isConfirmed: true } },
       },

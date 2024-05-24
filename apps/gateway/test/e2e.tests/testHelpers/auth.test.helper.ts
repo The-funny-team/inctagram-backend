@@ -53,7 +53,7 @@ export class AuthTestHelper {
   }
 
   async login(
-    loginDto: LoginDto,
+    loginDto: Pick<LoginDto, 'email' | 'password'>,
     deviceName: string,
     config: {
       expectedCode?: number;
