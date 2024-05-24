@@ -20,6 +20,7 @@ import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { ERROR_GET_URLS_FILES } from '@gateway/src/core/adapters/fileService/fileService.constants';
 import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
 import { randomUUID } from 'crypto';
+import { JwtAdapter } from '@gateway/src/core/jwt-adapter/jwt.adapter';
 
 jest.setTimeout(15000);
 
@@ -28,6 +29,7 @@ describe('PostController (e2e) test', () => {
   let authTestHelper: AuthTestHelper;
   let postTestHelper: IPostTestHelper;
   let fileServiceAdapter: FileServiceAdapter;
+  let jwtAdapter: JwtAdapter;
   const posts: Post[] = [];
 
   const emailAdapterMock = {
@@ -45,6 +47,8 @@ describe('PostController (e2e) test', () => {
 
     fileServiceAdapter =
       testingModule.get<FileServiceAdapter>(FileServiceAdapter);
+
+    jwtAdapter = testingModule.get<JwtAdapter>(JwtAdapter);
 
     app = await getAppForE2ETesting(testingModule);
 
@@ -131,9 +135,11 @@ describe('PostController (e2e) test', () => {
         );
 
         const createPostDto = postTestHelper.postDto();
+
         const createdPost = await postTestHelper.createPost(
           accessToken,
-          createPostDto,
+          // Проверка на пустое описание первово созданного поста
+          i === 0 ? { ...createPostDto, description: '' } : createPostDto,
           {
             expectedCode: HttpStatus.CREATED,
           },
@@ -208,6 +214,25 @@ describe('PostController (e2e) test', () => {
       const posts = await postTestHelper.getPosts({}, post.authorId);
 
       expect(posts.body.length).not.toBe(4);
+    });
+
+    it('should get empty posts by user id', async () => {
+      const { userId } = jwtAdapter.decodeToken(accesTokenSecondUser);
+
+      expect(userId).not.toBeUndefined();
+
+      jest.spyOn(fileServiceAdapter, 'getFilesInfo').mockReturnValueOnce(
+        Result.Ok([
+          {
+            ownerId: userId,
+            url: 'url',
+          },
+        ]) as any,
+      );
+
+      const posts = await postTestHelper.getPosts({}, userId);
+
+      expect(posts.body.length).toBe(0);
     });
 
     it('should get error if get posts by invalid user id', async () => {

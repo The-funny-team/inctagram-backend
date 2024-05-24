@@ -38,7 +38,7 @@ async function truncateDBTables(app: INestApplication) {
   try {
     await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
   } catch (error) {
-    console.log({ error });
+    console.error({ error });
   }
 }
 

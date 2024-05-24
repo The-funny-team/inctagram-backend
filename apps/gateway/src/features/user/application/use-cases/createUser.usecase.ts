@@ -27,23 +27,17 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
   }: CreateUserCommand): Promise<
     Result<CreatedUserWithRegistrationInfo | null>
   > {
-    console.log('enter CreateUserUseCase');
     await validateOrRejectModel(userDto, CreateUserDto);
-
-    console.log('validated');
 
     const userByEmail = await this.userRepo.findByUsernameOrEmail(
       userDto.email,
     );
-
-    console.log('userByEmail');
 
     if (this.isCorrectNotConfirmedUser(userByEmail!, userDto)) {
       await this.userService.updateConfirmationCode(
         userByEmail!.userRegistrationInfo!.id,
         userByEmail!.email,
       );
-      console.log('successfully update');
       return Result.Ok(userByEmail);
     }
 
@@ -65,20 +59,13 @@ export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
 
     userDto.password = this.userService.generatePasswordHash(userDto.password);
 
-    console.log('password generated');
-
     const userInfo = this.getUserInfo();
-    console.log('userInfo');
     const createdUser = await this.userRepo.create(userDto, userInfo);
-
-    console.log('createdUser', createdUser);
 
     this.userService.createUserInfoCreatedEvent(
       createdUser.email,
       userInfo.confirmationCode!,
     );
-
-    console.log('event created');
 
     return Result.Ok(createdUser);
   }
