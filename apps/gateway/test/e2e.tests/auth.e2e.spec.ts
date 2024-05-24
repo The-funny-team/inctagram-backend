@@ -290,6 +290,16 @@ describe('AuthController (e2e) test', () => {
       await authTestHelper.newRefreshToken(oldRefreshToken, deviceName, {
         expectedCode: 201,
       });
+
+      // Тест на регистронезависимость
+      await authTestHelper.login(
+        {
+          ...loginData,
+          email: loginData.email.toUpperCase(),
+        },
+        deviceName,
+        { expectedCode: HttpStatus.OK },
+      );
     });
 
     it(`${endpoints.newRefreshToken} (POST) Should NOT get new token 
