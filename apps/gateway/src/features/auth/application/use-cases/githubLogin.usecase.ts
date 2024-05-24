@@ -70,7 +70,7 @@ export class GitHubLoginUseCase
     let email;
 
     for (const userEmail of resultGitHubUserEmails.value) {
-      if (userEmail.primary & userEmail.verified) {
+      if (userEmail.primary && userEmail.verified) {
         email = userEmail.email;
       }
     }
