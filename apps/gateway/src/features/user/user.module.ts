@@ -16,6 +16,7 @@ import {
   FileServiceAdapter,
   getClientFileServiceConfig,
 } from '@gateway/src/core';
+import { PublicUserController } from '@gateway/src/features/user/api/public-user.controller';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import {
     CqrsModule,
     EventEmitterModule.forRoot(),
   ],
+  controllers: [UserController, PublicUserController],
   providers: [
     UserConfig,
     ...USER_USE_CASES,
@@ -35,6 +37,5 @@ import {
     FileServiceAdapter,
   ],
   exports: [UserFacade],
-  controllers: [UserController],
 })
 export class UserModule {}
