@@ -1,4 +1,4 @@
-export * from './result';
+export * from './result-intercepter';
 export * from './exceptions';
 export * from './config';
 export * from './responses';

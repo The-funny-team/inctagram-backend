@@ -1,9 +1,12 @@
-import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseInterceptors } from '@nestjs/common';
 import { UserQueryRepository } from '../db';
 import { ResponseUserDto } from '../responses';
 import { ApiTags } from '@nestjs/swagger';
 import { UserSwaggerDecorator } from '@gateway/src/core/swagger/user/user.swagger.decorator';
 import { TotalUsersSwaggerDecorator } from '@gateway/src/core/swagger/user/totalUsers.swagger.decorator';
+import { ResultInterceptor } from '@gateway/src/core/result-intercepter/result.interceptor';
+import { Result } from '@gateway/src/core';
+import { ResponseGetTotalUsersDto } from '@gateway/src/features/user/responses';
 
 const baseUrl = '/public-user';
 export const endpoints = {
@@ -17,20 +20,18 @@ export class PublicUserController {
   constructor(private readonly userQueryRepo: UserQueryRepository) {}
 
   @UserSwaggerDecorator()
+  @UseInterceptors(ResultInterceptor)
   @Get('profile/:userName')
-  async getUser(@Param('userName') userName: string): Promise<ResponseUserDto> {
-    const userViewResult = await this.userQueryRepo.getUserView(userName);
-
-    if (!userViewResult.isSuccess) {
-      throw userViewResult.err;
-    }
-    return userViewResult.value;
+  async getUser(
+    @Param('userName') userName: string,
+  ): Promise<Result<ResponseUserDto>> {
+    return await this.userQueryRepo.getUserView(userName);
   }
 
   @TotalUsersSwaggerDecorator()
+  @UseInterceptors(ResultInterceptor)
   @Get('total')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async getTotal() {
-    return this.userQueryRepo.getTotalUsers();
+  async getTotal(): Promise<Result<ResponseGetTotalUsersDto>> {
+    return await this.userQueryRepo.getTotalUsers();
   }
 }

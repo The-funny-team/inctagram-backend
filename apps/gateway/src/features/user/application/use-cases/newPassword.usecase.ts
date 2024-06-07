@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NewPasswordDto } from '../../dto';
 import { validateOrRejectModel } from '../../../../core/config';
-import { Result } from '../../../../core/result';
+import { Result } from '../../../../core/result-intercepter/result';
 import { BadRequestError } from '../../../../core/exceptions';
 import { ERROR_INCORRECT_RECOVER_CODE } from '../../user.constants';
 import { UserService } from '../../user.service';

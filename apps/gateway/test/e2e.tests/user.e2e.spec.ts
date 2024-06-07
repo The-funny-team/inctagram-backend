@@ -61,6 +61,16 @@ describe('UserController (e2e) test', () => {
     await app.close();
   });
 
+  describe('Get total users', () => {
+    it(`${userEndpoints.meProfile()} (GET) - Total users`, async () => {
+      const { body } = await userTestHelper.getTotalUsers();
+      console.log(body);
+      expect(body).toStrictEqual({
+        totalCount: expect.any(Number),
+      });
+    });
+  });
+
   describe('Me', () => {
     it(`${userEndpoints.meProfile()} (GET) - get profile correct data`, async () => {
       const resTokens = await authTestHelper.login(loginDto, deviceName);

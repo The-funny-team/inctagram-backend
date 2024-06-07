@@ -9,7 +9,6 @@ import {
 import { UserQueryRepository } from './db/user.query.repository';
 import { ResponseUserDto } from './responses';
 import { Provider, User } from '@prisma/client';
-import { Result } from '../../core/result';
 import {
   ConfirmationRegistrationCommand,
   CreateUserCommand,
@@ -18,18 +17,21 @@ import {
   PasswordRecoveryResendingCommand,
 } from './application';
 import { ConfirmationCodeDto } from '../auth/dto';
-import { CheckUserCredentialsCommand } from './application/use-cases/checkUserCredentials';
 import { LoginDto } from '../auth/dto/login.dto';
 import { UserId } from './types/userId.type';
-import { UserPasswordRecoveryCommand } from './application/use-cases/userPasswordRecovery.usecase';
 import { UserRepository } from './db';
 import {
   UpdateUserProviderByProviderIdData,
   UpdateUserProviderByProviderIdParams,
 } from './types';
 import { ProviderUserResponse } from '../auth/response';
-import { RegistrationEmailResendingCommand } from './application/use-cases/registrationEmailResending.usecase';
+import {
+  RegistrationEmailResendingCommand,
+  UserPasswordRecoveryCommand,
+  CheckUserCredentialsCommand,
+} from '@gateway/src/features/user/application';
 import { PasswordRecoveryResendingDto } from './dto/passwordRecoveryResending.dto';
+import { Result } from '@gateway/src/core/result-intercepter';
 
 @Injectable()
 export class UserFacade {

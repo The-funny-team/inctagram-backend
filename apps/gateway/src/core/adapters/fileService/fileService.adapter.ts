@@ -6,7 +6,7 @@ import {
 } from '@libs/contracts';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Result } from '../../result';
+import { Result } from '../../result-intercepter/result';
 import { firstValueFrom, timeout } from 'rxjs';
 import { BadGatewayError } from '../../exceptions';
 import {

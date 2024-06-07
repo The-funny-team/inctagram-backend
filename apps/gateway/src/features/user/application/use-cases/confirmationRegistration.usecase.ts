@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Result } from '../../../../core/result';
+import { Result } from '../../../../core/result-intercepter/result';
 import { BadRequestError } from '../../../../core/exceptions';
 import { ERROR_INCORRECT_CONFIRMATION_CODE } from '../../user.constants';
 import { ConfirmationCodeDto } from '../../../auth/dto';
