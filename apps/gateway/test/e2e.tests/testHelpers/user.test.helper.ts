@@ -71,4 +71,15 @@ export class UserTestHelper {
       .send(updateDto)
       .expect(expectedCode);
   }
+
+  async getTotalUsers(
+    config: {
+      expectedCode?: number;
+    } = {},
+  ) {
+    const expectedCode = config.expectedCode ?? HttpStatus.OK;
+    return request(this.app.getHttpServer())
+      .get(this.globalPrefix + publicUserEndpoints.getTotal())
+      .expect(expectedCode);
+  }
 }

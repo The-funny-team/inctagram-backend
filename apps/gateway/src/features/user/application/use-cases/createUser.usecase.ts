@@ -3,7 +3,7 @@ import { UserRepository } from '../../db';
 import { CreateUserDto, CreateUserInfoDto } from '../../dto';
 import { UserService } from '../../user.service';
 import { validateOrRejectModel } from '../../../../core/config';
-import { Result } from '../../../../core/result';
+import { Result } from '../../../../core/result-intercepter/result';
 import { BadRequestError } from '../../../../core/exceptions';
 import {
   ERROR_EMAIL_IS_ALREADY_REGISTRED,

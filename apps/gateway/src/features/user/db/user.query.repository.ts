@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../core/prisma/prisma.servise';
 import { ResponseUserDto } from '../responses';
-import { NotFoundError, Result } from '../../../core';
+import { NotFoundError, Result } from '../../../core/';
 import { USER_NOT_FOUND } from '../user.constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom, timeout } from 'rxjs';

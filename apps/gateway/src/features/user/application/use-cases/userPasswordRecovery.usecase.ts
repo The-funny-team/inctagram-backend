@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserPasswordRecoveryDto } from '../../dto';
 import { validateOrRejectModel } from '../../../../core/config';
-import { Result } from '../../../../core/result';
+import { Result } from '../../../../core/result-intercepter/result';
 import { UserRepository } from '../../db';
 import { BadRequestError } from '../../../../core/exceptions';
 import { ERROR_USER_WITH_THIS_EMAIL_NOT_EXIST } from '../../user.constants';
