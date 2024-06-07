@@ -6,6 +6,7 @@ import { USER_NOT_FOUND } from '../user.constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom, timeout } from 'rxjs';
 import { FileUrlResponse } from '@libs/contracts';
+import { ResponseGetTotalUsersDto } from '@gateway/src/features/user/responses/responseGetTotalUsers.dto';
 
 @Injectable()
 export class UserQueryRepository {
@@ -15,6 +16,13 @@ export class UserQueryRepository {
     private readonly prismaService: PrismaService,
     @Inject('FILE_SERVICE') private readonly fileServiceClient: ClientProxy,
   ) {}
+
+  async getTotalUsers(): Promise<Result<ResponseGetTotalUsersDto>> {
+    const countUsers = await this.prismaService.user.count();
+    return Result.Ok({
+      totalCount: countUsers,
+    });
+  }
 
   async getUserView(nameOrId: string): Promise<Result<ResponseUserDto>> {
     const user = await this.prismaService.user.findFirst({

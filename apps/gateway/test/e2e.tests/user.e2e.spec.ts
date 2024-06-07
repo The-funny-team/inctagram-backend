@@ -7,7 +7,8 @@ import { getAppForE2ETesting, randomString } from './utils/tests.utils';
 import { UserTestHelper } from './testHelpers/user.test.helper';
 import { ResponseUserDto } from '@gateway/src/features/user/responses';
 import { CreateUserDto } from '@gateway/src/features/user/dto';
-import { endpoints } from '@gateway/src/features/user/api/user.controller';
+import { endpoints as userEndpoints } from '@gateway/src/features/user/api/user.controller';
+import { endpoints as publicUsersEndpoints } from '@gateway/src/features/user/api/public-user.controller';
 import { subYears } from 'date-fns';
 import { LoginDto } from '@gateway/src/features/auth/dto/login.dto';
 import { EmailAdapter } from '@gateway/src/core/email-manager/email.adapter';
@@ -61,7 +62,7 @@ describe('UserController (e2e) test', () => {
   });
 
   describe('Me', () => {
-    it(`${endpoints.me()} (GET) - get profile correct data`, async () => {
+    it(`${userEndpoints.meProfile()} (GET) - get profile correct data`, async () => {
       const resTokens = await authTestHelper.login(loginDto, deviceName);
       const accessToken = resTokens.body.accessToken;
       const { body } = await userTestHelper.me(accessToken);
@@ -84,7 +85,7 @@ describe('UserController (e2e) test', () => {
       expect(body).toEqual(expectedBody);
     });
 
-    it(`${endpoints.me()} (GET) - Unauthorized`, async () => {
+    it(`${userEndpoints.meProfile()} (GET) - Unauthorized`, async () => {
       await userTestHelper.me('', {
         expectedCode: HttpStatus.UNAUTHORIZED,
       });
@@ -92,7 +93,7 @@ describe('UserController (e2e) test', () => {
   });
 
   describe('Get User', () => {
-    it(`${endpoints.getUser()} (GET) - get profile correct data`, async () => {
+    it(`${publicUsersEndpoints.getUser()} (GET) - get profile correct data`, async () => {
       const resTokens = await authTestHelper.login(loginDto, deviceName);
       const accessToken = resTokens.body.accessToken;
       const me = await userTestHelper.me(accessToken);
@@ -117,7 +118,7 @@ describe('UserController (e2e) test', () => {
       expect(body).toEqual(expectedBody);
     });
 
-    it(`${endpoints.getUser()} (GET) Should not get profile with incorrect data`, async () => {
+    it(`${publicUsersEndpoints.getUser()} (GET) Should not get profile with incorrect data`, async () => {
       await userTestHelper.getUser('', {
         expectedCode: HttpStatus.NOT_FOUND,
       });
@@ -125,7 +126,7 @@ describe('UserController (e2e) test', () => {
   });
 
   describe('updateUser', () => {
-    it(`${endpoints.updateUser()} (PUT) - update user correct data`, async () => {
+    it(`${userEndpoints.updateUser()} (PUT) - update user correct data`, async () => {
       const resTokens = await authTestHelper.login(loginDto, deviceName);
       const accessToken = resTokens.body.accessToken;
 
@@ -161,7 +162,7 @@ describe('UserController (e2e) test', () => {
       expect(body).toEqual(expectedBody);
     });
 
-    it(`${endpoints.updateUser()} (PUT) - Unauthorized`, async () => {
+    it(`${userEndpoints.updateUser()} (PUT) - Unauthorized`, async () => {
       await userTestHelper.updateUser(
         '',
         {},

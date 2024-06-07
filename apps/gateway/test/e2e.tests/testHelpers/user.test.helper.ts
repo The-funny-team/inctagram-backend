@@ -4,7 +4,8 @@ import { findUUIDv4, getGlobalPrefix } from '../utils/tests.utils';
 import { AuthTestHelper } from './auth.test.helper';
 import { ResponseUserDto } from '@gateway/src/features/user/responses';
 import { CreateUserDto, UpdateUserDto } from '@gateway/src/features/user/dto';
-import { endpoints } from '@gateway/src/features/user/api/user.controller';
+import { endpoints as userEndpoints } from '@gateway/src/features/user/api/user.controller';
+import { endpoints as publicUserEndpoints } from '@gateway/src/features/user/api/public-user.controller';
 
 export class UserTestHelper {
   globalPrefix = getGlobalPrefix();
@@ -39,7 +40,7 @@ export class UserTestHelper {
   ) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
     return request(this.app.getHttpServer())
-      .get(this.globalPrefix + endpoints.me())
+      .get(this.globalPrefix + userEndpoints.meProfile())
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(expectedCode);
   }
@@ -52,7 +53,7 @@ export class UserTestHelper {
   ) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
     return request(this.app.getHttpServer())
-      .get(this.globalPrefix + endpoints.getUser() + `/${userName}`)
+      .get(this.globalPrefix + publicUserEndpoints.getUser() + `/${userName}`)
       .expect(expectedCode);
   }
 
@@ -65,7 +66,7 @@ export class UserTestHelper {
   ) {
     const expectedCode = config.expectedCode ?? HttpStatus.OK;
     return request(this.app.getHttpServer())
-      .put(this.globalPrefix + endpoints.updateUser())
+      .put(this.globalPrefix + userEndpoints.updateUser())
       .set('Authorization', `Bearer ${accessToken}`)
       .send(updateDto)
       .expect(expectedCode);
