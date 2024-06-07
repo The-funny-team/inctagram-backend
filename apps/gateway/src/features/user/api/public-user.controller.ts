@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UserQueryRepository } from '../db';
 import { ResponseUserDto } from '../responses';
 import { ApiTags } from '@nestjs/swagger';
@@ -29,7 +29,6 @@ export class PublicUserController {
 
   @TotalUsersSwaggerDecorator()
   @Get('total')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async getTotal() {
     return this.userQueryRepo.getTotalUsers();
   }
