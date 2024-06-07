@@ -8,7 +8,6 @@ import {
   HttpCode,
   HttpStatus,
   MaxFileSizeValidator,
-  Param,
   ParseFilePipe,
   Post,
   Put,
@@ -34,13 +33,13 @@ import { MeSwaggerDecorator } from '../../../core/swagger/user/me.swagger.decora
 import { UpdateUserSwaggerDecorator } from '../../../core/swagger/user/updateUser.swagger.decorator';
 import { DeleteUserAvatarSwaggerDecorator } from '@gateway/src/core/swagger/user/deleteUserAvatar.swagger.decorator';
 import { UploadUserAvatarSwaggerDecorator } from '@gateway/src/core/swagger/user/uploadUserAvatar.swagger.decorator';
-import { UserSwaggerDecorator } from '@gateway/src/core/swagger/user/user.swagger.decorator';
 
 const baseUrl = '/user';
 export const endpoints = {
-  me: () => `${baseUrl}/me`,
-  getUser: () => `${baseUrl}`,
+  meProfile: () => `${baseUrl}/profile`,
   updateUser: () => `${baseUrl}`,
+  uploadAvatar: () => `${baseUrl}/avatar`,
+  deleteAvatar: () => `${baseUrl}/avatar`,
 };
 
 @ApiTags('User')
@@ -53,20 +52,9 @@ export class UserController {
 
   @MeSwaggerDecorator()
   @UseGuards(AccessTokenGuard)
-  @Get('me')
-  async me(@CurrentUserId() userId: string): Promise<ResponseUserDto> {
+  @Get('/profile')
+  async meProfile(@CurrentUserId() userId: string): Promise<ResponseUserDto> {
     const userViewResult = await this.userQueryRepo.getUserView(userId);
-    if (!userViewResult.isSuccess) {
-      throw userViewResult.err;
-    }
-    return userViewResult.value;
-  }
-
-  @UserSwaggerDecorator()
-  @Get(':userName')
-  async getUser(@Param('userName') userName: string): Promise<ResponseUserDto> {
-    const userViewResult = await this.userQueryRepo.getUserView(userName);
-
     if (!userViewResult.isSuccess) {
       throw userViewResult.err;
     }
