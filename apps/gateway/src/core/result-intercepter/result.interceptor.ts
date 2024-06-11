@@ -24,10 +24,6 @@ export class ResultInterceptor<T> implements NestInterceptor<T, Response<T>> {
           throw result.err;
         }
         return result.value;
-
-        // return {
-        //   data,
-        // };
       }),
     );
   }

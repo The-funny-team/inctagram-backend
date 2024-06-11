@@ -6,15 +6,22 @@ import { UserModule } from './features/user/user.module';
 import { EmailManagerModule } from './core/email-manager/email-manager.module';
 import { DeviceModule } from './features/device/device.module';
 import { PostModule } from '@gateway/src/features/post/post.module';
+import { PaymentModule } from '@gateway/src/features/payment/payment.module';
+
+console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+
+const env = {
+  development: 'envs/.gateway.development.env',
+  test: 'envs/.gateway.test.env',
+  default: 'envs/.gateway.env',
+};
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:
-        process.env.NODE_ENV === 'development'
-          ? 'envs/.gateway.development.env'
-          : 'envs/.gateway.env',
+        env[process.env.NODE_ENV as 'development' | 'test'] || env.default,
     }),
     PrismaModule,
     AuthModule,
@@ -22,6 +29,7 @@ import { PostModule } from '@gateway/src/features/post/post.module';
     DeviceModule,
     EmailManagerModule,
     PostModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [],

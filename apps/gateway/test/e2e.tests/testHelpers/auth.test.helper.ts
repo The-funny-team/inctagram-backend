@@ -12,6 +12,7 @@ import { LoginDto } from '@gateway/src/features/auth/dto/login.dto';
 
 export class AuthTestHelper {
   globalPrefix = getGlobalPrefix();
+
   constructor(private app: INestApplication) {}
 
   userDto(): CreateUserDto {
@@ -111,5 +112,38 @@ export class AuthTestHelper {
       .post(this.globalPrefix + endpoints.newPassword())
       .send(dto)
       .expect(expectedCode);
+  }
+
+  async registrationUserAndLogin({
+    emailAdapterMock,
+  }: {
+    emailAdapterMock: {
+      sendEmailConfirmationCode: jest.Mock;
+      sendRecoveryPasswordTempCode: jest.Mock;
+    };
+  }) {
+    const userDto = this.userDto();
+
+    await this.registrationUser(userDto);
+    await new Promise((pause) => setTimeout(pause, 100));
+
+    const mock = emailAdapterMock.sendEmailConfirmationCode.mock;
+    const lastMockCall = mock.calls.length - 1;
+
+    const codeConfirmation = mock.calls[lastMockCall][0].token;
+
+    await this.confirmRegistration({ code: codeConfirmation });
+
+    const loginData = new LoginDto(userDto.email, userDto.password);
+
+    const deviceName = 'chrome';
+
+    const tokenPairs = await this.login(loginData, deviceName);
+
+    const accessToken = tokenPairs.body.accessToken;
+
+    return {
+      accessToken,
+    };
   }
 }

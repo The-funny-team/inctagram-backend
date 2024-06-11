@@ -28,6 +28,8 @@ model User {
   city                 String?
   aboutMe              String?               @map("about_me")
   avatarId             String?               @map("avatar_id")
+  order                Order[]
+  PaymentTransaction   PaymentTransaction[]
 
   @@map("users")
 }
@@ -95,4 +97,80 @@ model Device {
   userId         String   @map("user_id")
 
   @@map("devices")
+}
+
+enum SubsriptionPeriod {
+  DAY
+  WEEK
+  MONTH
+}
+
+model Subsription {
+  id                 String               @id @default(uuid())
+  name               String               @unique()
+  description        String
+  price              Int
+  period             SubsriptionPeriod    @unique()
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
+  is_deleted         Boolean              @default(false)
+  orders             Order[]
+  PaymentTransaction PaymentTransaction[]
+
+  @@map("subsriptions")
+}
+
+enum OrderStatus {
+  PENDING
+  PAYMENT
+  PAID
+  DELIVERING
+  DELIVERED
+  CANCELED
+}
+
+model Order {
+  id                  String              @id @default(uuid())
+  user                User                @relation(fields: [user_id], references: [id])
+  user_id             String
+  total_price         Int
+  status              OrderStatus
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  is_deleted          Boolean             @default(false)
+  subscription        Subsription?        @relation(fields: [subscription_id], references: [id])
+  subscription_id     String?
+  payment_transaction PaymentTransaction?
+
+  @@map("orders")
+}
+
+enum PaymentSystem {
+  PAYPAL
+  STRIPE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  CANCELED
+}
+
+model PaymentTransaction {
+  id               String        @id @default(uuid())
+  user             User          @relation(fields: [userId], references: [id])
+  userId           String        @map("user_id")
+  system           PaymentSystem
+  status           PaymentStatus
+  isDeleted        Boolean       @default(false) @map("is_deleted")
+  order            Order         @relation(fields: [orderId], references: [id])
+  orderId          String        @unique() @map("order_id")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime?     @updatedAt @map("updated_at")
+  providerInfo     Json?
+  confirmationInfo Json?
+  subscription     Subsription?  @relation(fields: [subscriptionId], references: [id])
+  subscriptionId   String?
+
+  @@map("payment_transactions")
 }

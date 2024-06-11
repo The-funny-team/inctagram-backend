@@ -55,8 +55,10 @@
     "tsc:gateway:check": "tsc --p apps/gateway/tsconfig.app.json --noEmit",
     "tsc:storage:check": "tsc --p apps/storage/tsconfig.app.json --noEmit",
     "prisma:migrate-create-only": "dotenv -e envs/.gateway.development.env prisma migrate dev --create-only",
+    "prisma:generate": "dotenv -e envs/.gateway.development.env prisma generate",
     "prisma:migrate": "dotenv -e envs/.gateway.development.env prisma migrate dev",
-    "prisma:push": "prisma db push"
+    "prisma:seed": "dotenv -e envs/.gateway.development.env prisma db seed",
+    "prisma:push": "dotenv -e envs/.gateway.development.env prisma db push"
   },
   "resolutions": {
     "string-width": "4.2.3"
@@ -102,8 +104,9 @@
     "qs": "^6.12.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "sharp": "^0.33.3",
+    "sharp": "^0.33.4",
     "string-width": "^4.2.3",
+    "stripe": "^15.10.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -171,6 +174,7 @@
     "testTimeout": 15000
   },
   "prisma": {
-    "schema": "./apps/gateway/prisma/schema.prisma"
+    "schema": "./apps/gateway/prisma/schema.prisma",
+    "seed": "ts-node ./apps/gateway/prisma/seed.ts"
   }
 }
