@@ -54,7 +54,7 @@ export class UserController {
   @UseGuards(AccessTokenGuard)
   @Get('/profile')
   async meProfile(@CurrentUserId() userId: string): Promise<ResponseUserDto> {
-    const userViewResult = await this.userQueryRepo.getUserView(userId);
+    const userViewResult = await this.userQueryRepo.getUserByIdView(userId);
     if (!userViewResult.isSuccess) {
       throw userViewResult.err;
     }
@@ -77,7 +77,7 @@ export class UserController {
       throw updateResult.err;
     }
 
-    const userViewResult = await this.userQueryRepo.getUserView(userId);
+    const userViewResult = await this.userQueryRepo.getUserByIdView(userId);
     if (!userViewResult.isSuccess) {
       throw userViewResult.err;
     }
