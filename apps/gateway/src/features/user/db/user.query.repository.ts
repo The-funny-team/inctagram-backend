@@ -24,13 +24,27 @@ export class UserQueryRepository {
     });
   }
 
-  async getUserView(nameOrId: string): Promise<Result<ResponseUserDto>> {
+  async getUserByIdView(id: string): Promise<Result<ResponseUserDto>> {
+    return this.getUserView({ id });
+  }
+
+  async getUserByNameView(name: string): Promise<Result<ResponseUserDto>> {
+    return this.getUserView({ name });
+  }
+
+  private async getUserView(
+    payload:
+      | {
+          id: string;
+        }
+      | {
+          name: string;
+        },
+  ): Promise<Result<ResponseUserDto>> {
     const user = await this.prismaService.user.findFirst({
       where: {
-        OR: [
-          { id: nameOrId, isDeleted: false },
-          { name: nameOrId, isDeleted: false },
-        ],
+        isDeleted: false,
+        ...payload,
       },
     });
     if (!user) {
@@ -49,7 +63,9 @@ export class UserQueryRepository {
         await firstValueFrom(responseOfService);
       return Result.Ok(ResponseUserDto.getView(user, avatarUrl.url));
     } catch (error) {
-      this.logger.log(`userName or id: ${nameOrId} - ${error}`);
+      this.logger.log(
+        `User not found, ${JSON.stringify(payload)}. Error: ${error}`,
+      );
       return Result.Ok(ResponseUserDto.getView(user));
     }
   }

@@ -25,7 +25,7 @@ export class PublicUserController {
   async getUser(
     @Param('userName') userName: string,
   ): Promise<Result<ResponseUserDto>> {
-    return await this.userQueryRepo.getUserView(userName);
+    return await this.userQueryRepo.getUserByNameView(userName);
   }
 
   @TotalUsersSwaggerDecorator()
