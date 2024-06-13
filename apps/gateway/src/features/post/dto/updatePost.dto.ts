@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length, IsString, IsNotEmpty, Matches } from 'class-validator';
+import { Length, IsString, Matches, ValidateIf } from 'class-validator';
 import { ERROR_LENGTH_DESCRIPTION } from '@gateway/src/features/post/post.constants';
 
 export class UpdatePostDto {
   @ApiProperty({
-    description: 'Post description',
+    description: 'Post description, it can be an empty string',
     type: 'string',
     example: 'post_content',
     minLength: 3,
@@ -14,6 +14,6 @@ export class UpdatePostDto {
   @Matches('^[a-zA-Z0-9_ -\\s]*$')
   @Length(3, 500, { message: ERROR_LENGTH_DESCRIPTION })
   @IsString()
-  @IsNotEmpty()
+  @ValidateIf((o) => o.description !== '')
   description: string;
 }

@@ -4,8 +4,8 @@ import { ApiProperty } from '@nestjs/swagger';
 export class PostQueryDto {
   @IsOptional()
   @IsIn(['asc', 'desc'])
-  @ApiProperty({ description: 'Sorting direction', default: 'asc' })
-  sortDirection?: string = 'asc';
+  @ApiProperty({ description: 'Sorting direction', default: 'desc' })
+  sortDirection?: string = 'desc';
 
   @IsOptional()
   @IsIn(['createdAt', 'updatedAt', 'authorId'])
