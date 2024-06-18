@@ -31,6 +31,23 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
           imageId: image,
         }));
 
+        const createdPostWithThisImages =
+          await transactionClient.post.findFirst({
+            where: {
+              images: {
+                some: {
+                  imageId: {
+                    in: createDto.images,
+                  },
+                },
+              },
+            },
+          });
+
+        if (createdPostWithThisImages) {
+          throw new BadGatewayError(ERROR_UPDATE_OWNWER_ID_FILE);
+        }
+
         const post = await transactionClient.post.create({
           data: {
             description: createDto.description,

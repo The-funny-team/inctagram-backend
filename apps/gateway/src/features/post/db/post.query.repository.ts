@@ -27,7 +27,12 @@ export class PostQueryRepository {
 
     const post = await this.prismaService.post.findUnique({
       where: whereClause,
-      include: { images: true },
+      include: {
+        images: true,
+        author: {
+          select: { id: true, name: true, avatarId: true },
+        },
+      },
     });
 
     if (!post) {
@@ -37,10 +42,17 @@ export class PostQueryRepository {
     const ids = post.images.map((image) => image.imageId!);
 
     const result = await this.fileServiceAdapter.getFilesInfo(ids);
+
+    const avatarsData: Result<FileInfoResponse[]> | null = post.author.avatarId
+      ? await this.fileServiceAdapter.getFilesInfo([post.author.avatarId])
+      : null;
+
     if (!result.isSuccess) {
-      return Result.Ok(ResponsePostDto.getView(post));
+      return Result.Ok(ResponsePostDto.getView(post, avatarsData?.value?.[0]));
     }
-    return Result.Ok(ResponsePostDto.getView(post, result.value));
+    return Result.Ok(
+      ResponsePostDto.getView(post, avatarsData?.value?.[0], result.value),
+    );
   }
 
   async getPosts(
@@ -66,7 +78,12 @@ export class PostQueryRepository {
       orderBy: { [query!.sortField!]: query!.sortDirection },
       skip: Number(query!.skip),
       take: Number(query!.take) || undefined,
-      include: { images: true },
+      include: {
+        images: true,
+        author: {
+          select: { id: true, name: true, avatarId: true },
+        },
+      },
     });
 
     if (!posts.length) {
@@ -80,14 +97,29 @@ export class PostQueryRepository {
     const imagesData: Result<FileInfoResponse[]> =
       await this.fileServiceAdapter.getFilesInfo(imageIds);
 
+    const avatarIds = posts
+      .map((post) => post.author.avatarId)
+      .filter(Boolean) as string[];
+
+    const avatarsData: Result<FileInfoResponse[]> | null =
+      avatarIds.length > 0
+        ? await this.fileServiceAdapter.getFilesInfo(avatarIds)
+        : null;
+
     let mappedPostsView: ResponsePostDto[];
 
     if (!imagesData.isSuccess) {
-      mappedPostsView = posts.map((post) => ResponsePostDto.getView(post));
+      mappedPostsView = posts.map((post, index) =>
+        ResponsePostDto.getView(post, avatarsData?.value?.[index]),
+      );
     }
 
-    mappedPostsView = posts.map((post) =>
-      ResponsePostDto.getView(post, imagesData.value!),
+    mappedPostsView = posts.map((post, index) =>
+      ResponsePostDto.getView(
+        post,
+        avatarsData?.value?.[index],
+        imagesData.value!,
+      ),
     );
 
     return Result.Ok(mappedPostsView);
