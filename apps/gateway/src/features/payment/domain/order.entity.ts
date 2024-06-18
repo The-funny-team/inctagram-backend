@@ -1,28 +1,40 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { Order } from '@prisma/client';
+import { $Enums, Order } from '@prisma/client';
+import { plainToClass } from 'class-transformer';
 
 export class CreateOrder {
-  userId: Order['user_id'];
-  totalPrice: Order['total_price'];
-  subscriptionId: Order['subscription_id'];
+  userId: Order['userId'];
+  totalPrice: Order['totalPrice'];
+  subscriptionId: Order['subscriptionId'];
 }
 
 export class OrderEntity extends AggregateRoot implements Partial<Order> {
+  id?: Order['id'];
   status: Order['status'];
-  user_id: Order['user_id'];
-  total_price: Order['total_price'];
-  subscription_id: Order['subscription_id'];
+  userId: Order['userId'];
+  totalPrice: Order['totalPrice'];
+  subscriptionId: Order['subscriptionId'];
 
   constructor({ userId, totalPrice, subscriptionId }: CreateOrder) {
     super();
 
     this.status = 'PENDING';
-    this.total_price = totalPrice;
-    this.user_id = userId;
-    this.subscription_id = subscriptionId;
+    this.totalPrice = totalPrice;
+    this.userId = userId;
+    this.subscriptionId = subscriptionId;
   }
 
   static createOrder(payload: CreateOrder): OrderEntity {
     return new OrderEntity(payload);
+  }
+
+  static plainToClass<T extends Partial<Order> & { id: string }>(
+    payload: T | null,
+  ): OrderEntity {
+    return plainToClass(OrderEntity, payload);
+  }
+
+  confirmPaid() {
+    this.status = $Enums.OrderStatus.PAID;
   }
 }

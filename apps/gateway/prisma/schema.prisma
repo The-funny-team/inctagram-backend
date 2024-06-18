@@ -112,9 +112,9 @@ model Subsription {
   description        String
   price              Int
   period             SubsriptionPeriod    @unique()
-  created_at         DateTime             @default(now())
-  updated_at         DateTime             @updatedAt
-  is_deleted         Boolean              @default(false)
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  isDeleted          Boolean              @default(false) @map("is_deleted")
   orders             Order[]
   PaymentTransaction PaymentTransaction[]
 
@@ -131,17 +131,17 @@ enum OrderStatus {
 }
 
 model Order {
-  id                  String              @id @default(uuid())
-  user                User                @relation(fields: [user_id], references: [id])
-  user_id             String
-  total_price         Int
-  status              OrderStatus
-  created_at          DateTime            @default(now())
-  updated_at          DateTime            @updatedAt
-  is_deleted          Boolean             @default(false)
-  subscription        Subsription?        @relation(fields: [subscription_id], references: [id])
-  subscription_id     String?
-  payment_transaction PaymentTransaction?
+  id                 String              @id @default(uuid())
+  user               User                @relation(fields: [userId], references: [id])
+  userId             String              @map("user_id")
+  totalPrice         Int                 @map("total_price")
+  status             OrderStatus
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  isDeleted          Boolean             @default(false) @map("is_deleted")
+  subscription       Subsription?        @relation(fields: [subscriptionId], references: [id])
+  subscriptionId     String?             @map("subscription_id")
+  paymentTransaction PaymentTransaction?
 
   @@map("orders")
 }
@@ -168,10 +168,10 @@ model PaymentTransaction {
   orderId          String        @unique() @map("order_id")
   createdAt        DateTime      @default(now()) @map("created_at")
   updatedAt        DateTime?     @updatedAt @map("updated_at")
-  providerInfo     Json?
-  confirmationInfo Json?
+  providerInfo     Json?         @map("provider_info")
+  confirmationInfo Json?         @map("confirmation_info")
   subscription     Subsription?  @relation(fields: [subscriptionId], references: [id])
-  subscriptionId   String?
+  subscriptionId   String?       @map("subscription_id")
 
   @@map("payment_transactions")
 }

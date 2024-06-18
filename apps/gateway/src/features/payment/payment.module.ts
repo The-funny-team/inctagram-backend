@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
-import { SubscriptionsController } from '@gateway/src/features/payment/api/subscriptions.controller';
+import {
+  SubscriptionsController,
+  SubscriptionsHooksController,
+} from '@gateway/src/features/payment/api';
 import { TransactionsRepository } from '@gateway/src/features/payment/infrastructure/transactions.repository';
 import { OrdersRepository } from '@gateway/src/features/payment/infrastructure/orders.repository';
 import { SubscriptionRepository } from '@gateway/src/features/payment/infrastructure/subsription-repository.repository';
@@ -9,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PaymentAdapter } from '@gateway/src/features/payment/adapters/payment.adapter';
 import { StripeAdapter } from '@gateway/src/features/payment/adapters/stripe.adapter';
+import { SubscriptionQueryRepository } from '@gateway/src/features/payment/infrastructure/subsription.query.repository';
 
 @Module({
   imports: [
@@ -22,12 +26,13 @@ import { StripeAdapter } from '@gateway/src/features/payment/adapters/stripe.ada
       inject: [ConfigService],
     }),
   ],
-  controllers: [SubscriptionsController],
+  controllers: [SubscriptionsController, SubscriptionsHooksController],
   providers: [
     ...useCases,
     TransactionsRepository,
     OrdersRepository,
     SubscriptionRepository,
+    SubscriptionQueryRepository,
     PaymentAdapter,
     StripeAdapter,
   ],

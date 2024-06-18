@@ -19,7 +19,7 @@ export class SubscribeTestHelper {
     } = {},
   ): Promise<ResponseCreateSubscriptionDto> {
     const expectedCode = config.expectedCode ?? HttpStatus.CREATED;
-    return request(this.app.getHttpServer())
+    const response = await request(this.app.getHttpServer())
       .post(
         this.globalPrefix +
           subscriptionEndpoints.createSubscription() +
@@ -27,9 +27,11 @@ export class SubscribeTestHelper {
           redirectUrl,
       )
       .auth(accessToken, { type: 'bearer' })
-      .send(body)
-      .expect(expectedCode)
-      .then(({ body }) => body);
+      .send(body);
+
+    expect(response.status).toBe(expectedCode);
+
+    return response.body;
   }
 
   async getSubscriptions(

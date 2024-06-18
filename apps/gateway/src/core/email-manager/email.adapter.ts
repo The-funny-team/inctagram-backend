@@ -25,4 +25,11 @@ export class EmailAdapter {
       dto,
     );
   }
+
+  async sendPaidNotification<T extends { email: string }>(dto: T) {
+    this.client.emit<number>(
+      { cmd: 'email-notification', type: 'subscribe' },
+      dto,
+    );
+  }
 }

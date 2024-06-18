@@ -8,7 +8,6 @@ import {
 import { SubscriptionRepository } from '@gateway/src/features/payment/infrastructure/subsription-repository.repository';
 import { OrdersRepository } from '@gateway/src/features/payment/infrastructure/orders.repository';
 import { TransactionsRepository } from '@gateway/src/features/payment/infrastructure/transactions.repository';
-import { StripeService } from '@app/core/stripe/stripe.service';
 import { OrderEntity } from '@gateway/src/features/payment/domain/order.entity';
 import { PaymentTransactionEntity } from '@gateway/src/features/payment/domain/transaction.entity';
 import { ResponseCreateSubscriptionDto } from '@gateway/src/features/payment/api/dto/response-create-subscription.dto';
@@ -31,7 +30,6 @@ export class CreateSubscriptionUseCase
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly stripeService: StripeService,
     private readonly productsRepository: SubscriptionRepository,
     private readonly ordersRepository: OrdersRepository,
     private readonly transactionsRepository: TransactionsRepository,

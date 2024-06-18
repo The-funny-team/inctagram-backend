@@ -16,8 +16,9 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreateSubscriptionCommand } from '@gateway/src/features/payment/aplication/use-cases';
 import { CurrentUserId } from '@gateway/src/core/decorators/currentUserId.decorator';
 import { RedirectUrlDto } from '@libs/contracts/common/redirect-url.dto';
-import { SubscriptionRepository } from '@gateway/src/features/payment/infrastructure/subsription-repository.repository';
 import { ApiGetSubscriptionSwaggerDecorator } from '@gateway/src/features/payment/api/swagger/subsriptions/api-get-subscriptions.swagger.decorator';
+import { ResponseSubscriptionDto } from '@gateway/src/features/payment/api/dto/response-subscriptions.dto';
+import { SubscriptionQueryRepository } from '@gateway/src/features/payment/infrastructure/subsription.query.repository';
 
 const baseUrl = '/subscriptions';
 
@@ -31,16 +32,15 @@ export const endpoints = {
 export class SubscriptionsController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly subscriptionRepository: SubscriptionRepository,
+    private readonly subscriptionQueryRepository: SubscriptionQueryRepository,
   ) {}
 
   @AppAuthGuard()
   @ApiGetSubscriptionSwaggerDecorator()
   @UseInterceptors(ResultInterceptor)
   @Get()
-  async getSubscriptions(): Promise<Result<any>> {
-    const subscriptions = await this.subscriptionRepository.getSubscriptions();
-    return Result.Ok(subscriptions);
+  async getSubscriptions(): Promise<Result<ResponseSubscriptionDto[]>> {
+    return await this.subscriptionQueryRepository.getSubscriptions();
   }
 
   @AppAuthGuard()

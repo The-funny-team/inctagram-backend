@@ -6,5 +6,5 @@ export const returnSubscriptionObject: Prisma.SubsriptionSelect = {
   price: true,
   name: true,
   description: true,
-  created_at: true,
+  createdAt: true,
 };

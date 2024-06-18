@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
 import { SubscriptionPaymentType } from '@gateway/src/features/payment/api/dto/create-subscription.dto';
 
-export class GetSubscriptionDto {
+export class ResponseSubscriptionDto {
   @ApiProperty({
     description: 'Identifier',
   })
@@ -37,5 +37,5 @@ export class GetSubscriptionDto {
   @ApiProperty({
     description: 'Subscription created at',
   })
-  created_at: number;
+  createdAt: number;
 }

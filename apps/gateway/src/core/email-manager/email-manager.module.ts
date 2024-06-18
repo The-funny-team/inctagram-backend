@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { EmailManagerService } from './email-manager.service';
+import { EmailManagerListener } from './email-manager.listener';
 import { EmailConfig } from '../../../../notifier/src/config';
 import { AppConfig } from '../config/application';
 import { EmailAdapter } from './email.adapter';
@@ -27,6 +27,6 @@ import { ConfigService } from '@nestjs/config';
       },
     ]),
   ],
-  providers: [EmailManagerService, EmailConfig, AppConfig, EmailAdapter],
+  providers: [EmailManagerListener, EmailConfig, AppConfig, EmailAdapter],
 })
 export class EmailManagerModule {}

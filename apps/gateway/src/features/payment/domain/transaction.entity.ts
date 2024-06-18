@@ -1,5 +1,6 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { PaymentTransaction } from '@prisma/client';
+import { $Enums, PaymentTransaction } from '@prisma/client';
+import { plainToClass } from 'class-transformer';
 
 export class CreatePaymentTransaction {
   userId: PaymentTransaction['userId'];
@@ -14,6 +15,7 @@ export class PaymentTransactionEntity
   extends AggregateRoot
   implements Partial<PaymentTransaction>
 {
+  id?: PaymentTransaction['id'];
   userId: PaymentTransaction['userId'];
   system: PaymentTransaction['system'];
   status: PaymentTransaction['status'];
@@ -32,7 +34,7 @@ export class PaymentTransactionEntity
   }: CreatePaymentTransaction) {
     super();
 
-    this.status = 'PENDING';
+    this.status = $Enums.PaymentStatus.PENDING;
     this.userId = userId;
     this.system = system;
     this.orderId = orderId;
@@ -44,7 +46,21 @@ export class PaymentTransactionEntity
     return new PaymentTransactionEntity(payload);
   }
 
+  static plainToClass<T extends Partial<PaymentTransaction> & { id: string }>(
+    payload: T,
+  ): PaymentTransactionEntity {
+    return plainToClass(PaymentTransactionEntity, payload);
+  }
+
   setProviderInfo(providerInfo: string) {
     this.providerInfo = providerInfo;
+  }
+
+  confirmPaid() {
+    this.status = $Enums.PaymentStatus.PAID;
+  }
+
+  cancelPaid() {
+    this.status = $Enums.PaymentStatus.CANCELED;
   }
 }

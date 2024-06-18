@@ -26,11 +26,12 @@ describe('Subscriptions (e2e) test', () => {
     sendRecoveryPasswordTempCode: jest.fn(),
   };
 
+  const mockPaidUrl = 'https://mock-stripe-session-url.com';
   const stripeServiceMock = {
     checkout: {
       sessions: {
         create: jest.fn().mockResolvedValue({
-          url: 'https://mock-stripe-session-url.com',
+          url: mockPaidUrl,
           providerInfo: '',
           // Другие свойства сессии, которые могут быть полезны для тестирования
         }),
@@ -61,8 +62,6 @@ describe('Subscriptions (e2e) test', () => {
       });
 
     accessToken = _accessToken;
-
-    jest.clearAllMocks();
   });
 
   afterEach(async () => {
@@ -125,7 +124,7 @@ describe('Subscriptions (e2e) test', () => {
       cancel_url: `${redirectUrl}/cancel`,
     });
 
-    expect(subscription.url).not.toBeUndefined();
+    expect(subscription.url).toBe(mockPaidUrl);
   });
 
   // fixme: This test is work if should after test is used stripeServiceMock

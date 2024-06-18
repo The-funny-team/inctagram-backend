@@ -28,6 +28,13 @@ pipeline {
                 }
             }
         }
+        stage('Seeding') {
+            steps {
+                script {
+                    sh "yarn prisma:seed"
+                }
+            }
+        }
         stage('Typescript Check') {
             steps {
                 script {

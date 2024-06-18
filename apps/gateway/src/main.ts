@@ -4,7 +4,9 @@ import { configApp } from './core';
 import { AppConfig } from './core/config/application';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+  });
 
   configApp(app);
 
