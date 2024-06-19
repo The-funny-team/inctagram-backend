@@ -20,11 +20,11 @@ export class PostQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  skip: number = 0;
+  skip?: number = 0;
 
   @ApiProperty({ description: 'Number of items to take', default: 10 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  take: number = 10;
+  take?: number = 10;
 }

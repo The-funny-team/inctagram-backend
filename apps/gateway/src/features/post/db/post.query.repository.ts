@@ -59,7 +59,11 @@ export class PostQueryRepository {
   async getPosts(
     query: PostQueryDto,
     userId?: string,
-  ): Promise<Result<PageDto<ResponsePostDto[], PostQueryDto>>> {
+  ): Promise<
+    Result<
+      PageDto<ResponsePostDto[], Required<Pick<PostQueryDto, 'skip' | 'take'>>>
+    >
+  > {
     const whereClause: PostsWhereClause = { isDeleted: false };
     console.log(query);
     if (userId) {
@@ -96,7 +100,10 @@ export class PostQueryRepository {
         new PageDto({
           data: [],
           totalCount,
-          options: query,
+          options: {
+            skip: query.skip!,
+            take: query.take!,
+          },
         }),
       );
     }
@@ -137,7 +144,10 @@ export class PostQueryRepository {
       new PageDto({
         data: mappedPostsView,
         totalCount,
-        options: query,
+        options: {
+          skip: query.skip!,
+          take: query.take!,
+        },
       }),
     );
   }

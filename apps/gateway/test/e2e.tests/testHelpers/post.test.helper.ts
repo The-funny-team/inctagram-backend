@@ -96,7 +96,13 @@ export class PostTestHelper implements IPostTestHelper {
       )
       .query(query || {})
       .send()
-      .expect(expectedCode);
+      .expect(expectedCode)
+      .then((data) => {
+        return {
+          // todo: rewrite tests for use pagination
+          body: data.body.data,
+        };
+      });
   }
 
   private parseParams(

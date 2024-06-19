@@ -68,7 +68,7 @@ export class ResponsePostDto {
 
 export class ResponsePostsViewDto extends PageAbstractDto<
   ResponsePostDto[],
-  PostQueryDto
+  Required<PostQueryDto>
 > {
   @ApiProperty({ type: [ResponsePostDto] })
   data: ResponsePostDto[];
