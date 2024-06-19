@@ -266,6 +266,8 @@ describe('PostController (e2e) test', () => {
 
       const posts = await postTestHelper.getPosts(query);
 
+      console.log('post id', post);
+
       expect(posts.body.length).toBe(4);
       expect(posts.body[0].id).toBe(post.id);
       expect(posts.body[0].imagesUrl).toEqual([]);

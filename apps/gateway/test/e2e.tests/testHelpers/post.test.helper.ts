@@ -4,6 +4,7 @@ import { getGlobalPrefix, randomString } from '../utils/tests.utils';
 import { CreatePostDto } from '@gateway/src/features/post/dto/createPost.dto';
 import { endpoints } from '@gateway/src/features/post/api/post.controller';
 import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
+import mongoose from 'mongoose';
 
 export interface IPostTestHelper {
   postDto(): CreatePostDto;
@@ -46,13 +47,7 @@ export class PostTestHelper implements IPostTestHelper {
   postDto(): CreatePostDto {
     return {
       description: randomString(20),
-      images: [
-        randomString(5),
-        randomString(5),
-        randomString(5),
-        randomString(5),
-        randomString(5),
-      ],
+      images: new Array(5).fill(new mongoose.Types.ObjectId().toString()),
     };
   }
 
