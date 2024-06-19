@@ -1,5 +1,6 @@
-import { IsOptional, IsIn } from 'class-validator';
+import { IsIn, IsInt, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class PostQueryDto {
   @IsOptional()
@@ -15,11 +16,15 @@ export class PostQueryDto {
   })
   sortField?: string = 'createdAt';
 
-  @IsOptional()
   @ApiProperty({ description: 'Number of items to skip', default: 0 })
-  skip?: number = 0;
-
   @IsOptional()
-  @ApiProperty({ description: 'Number of items to take', default: undefined })
-  take?: number = undefined;
+  @Type(() => Number)
+  @IsInt()
+  skip: number = 0;
+
+  @ApiProperty({ description: 'Number of items to take', default: 10 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  take: number = 10;
 }

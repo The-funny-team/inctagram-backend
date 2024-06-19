@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Post } from '@prisma/client';
 import { FileInfoResponse } from '@libs/contracts';
 import { ResponseAuthorDto } from '@gateway/src/features/post/responses/response-author.dto';
+import { PageAbstractDto } from '@app/core/paging/pageing.dto';
+import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 
 export class ResponsePostDto {
   @ApiProperty({
@@ -62,4 +64,12 @@ export class ResponsePostDto {
         : [],
     };
   }
+}
+
+export class ResponsePostsViewDto extends PageAbstractDto<
+  ResponsePostDto[],
+  PostQueryDto
+> {
+  @ApiProperty({ type: [ResponsePostDto] })
+  data: ResponsePostDto[];
 }

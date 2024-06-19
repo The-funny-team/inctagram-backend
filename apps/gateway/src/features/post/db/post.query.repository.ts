@@ -7,6 +7,7 @@ import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { FileInfoResponse } from '@libs/contracts';
 import { PostsWhereClause } from '@gateway/src/features/post/types/postsWhereClause.type';
 import { PostWhereClause } from '@gateway/src/features/post/types/postWhereClause.type';
+import { PageDto } from '@app/core/paging/pageing.dto';
 
 @Injectable()
 export class PostQueryRepository {
@@ -56,11 +57,11 @@ export class PostQueryRepository {
   }
 
   async getPosts(
-    query?: PostQueryDto,
+    query: PostQueryDto,
     userId?: string,
-  ): Promise<Result<ResponsePostDto[]>> {
+  ): Promise<Result<PageDto<ResponsePostDto[], PostQueryDto>>> {
     const whereClause: PostsWhereClause = { isDeleted: false };
-
+    console.log(query);
     if (userId) {
       whereClause.authorId = userId;
 
@@ -76,8 +77,8 @@ export class PostQueryRepository {
     const posts = await this.prismaService.post.findMany({
       where: whereClause,
       orderBy: { [query!.sortField!]: query!.sortDirection },
-      skip: Number(query!.skip),
-      take: Number(query!.take) || undefined,
+      skip: query.skip,
+      take: query.take,
       include: {
         images: true,
         author: {
@@ -86,8 +87,18 @@ export class PostQueryRepository {
       },
     });
 
+    const totalCount = await this.prismaService.post.count({
+      where: whereClause,
+    });
+
     if (!posts.length) {
-      return Result.Ok([]);
+      return Result.Ok(
+        new PageDto({
+          data: [],
+          totalCount,
+          options: query,
+        }),
+      );
     }
 
     const imageIds = posts.flatMap((post) =>
@@ -122,6 +133,12 @@ export class PostQueryRepository {
       ),
     );
 
-    return Result.Ok(mappedPostsView);
+    return Result.Ok(
+      new PageDto({
+        data: mappedPostsView,
+        totalCount,
+        options: query,
+      }),
+    );
   }
 }
