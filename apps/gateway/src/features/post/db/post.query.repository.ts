@@ -7,6 +7,7 @@ import { PostQueryDto } from '@gateway/src/features/post/dto/postQuery.dto';
 import { FileInfoResponse } from '@libs/contracts';
 import { PostsWhereClause } from '@gateway/src/features/post/types/postsWhereClause.type';
 import { PostWhereClause } from '@gateway/src/features/post/types/postWhereClause.type';
+import { PageDto } from '@app/core/paging/pageing.dto';
 
 @Injectable()
 export class PostQueryRepository {
@@ -27,7 +28,12 @@ export class PostQueryRepository {
 
     const post = await this.prismaService.post.findUnique({
       where: whereClause,
-      include: { images: true },
+      include: {
+        images: true,
+        author: {
+          select: { id: true, name: true, avatarId: true },
+        },
+      },
     });
 
     if (!post) {
@@ -37,18 +43,29 @@ export class PostQueryRepository {
     const ids = post.images.map((image) => image.imageId!);
 
     const result = await this.fileServiceAdapter.getFilesInfo(ids);
+
+    const avatarsData: Result<FileInfoResponse[]> | null = post.author.avatarId
+      ? await this.fileServiceAdapter.getFilesInfo([post.author.avatarId])
+      : null;
+
     if (!result.isSuccess) {
-      return Result.Ok(ResponsePostDto.getView(post));
+      return Result.Ok(ResponsePostDto.getView(post, avatarsData?.value?.[0]));
     }
-    return Result.Ok(ResponsePostDto.getView(post, result.value));
+    return Result.Ok(
+      ResponsePostDto.getView(post, avatarsData?.value?.[0], result.value),
+    );
   }
 
   async getPosts(
-    query?: PostQueryDto,
+    query: PostQueryDto,
     userId?: string,
-  ): Promise<Result<ResponsePostDto[]>> {
+  ): Promise<
+    Result<
+      PageDto<ResponsePostDto[], Required<Pick<PostQueryDto, 'skip' | 'take'>>>
+    >
+  > {
     const whereClause: PostsWhereClause = { isDeleted: false };
-
+    console.log(query);
     if (userId) {
       whereClause.authorId = userId;
 
@@ -64,13 +81,31 @@ export class PostQueryRepository {
     const posts = await this.prismaService.post.findMany({
       where: whereClause,
       orderBy: { [query!.sortField!]: query!.sortDirection },
-      skip: Number(query!.skip),
-      take: Number(query!.take) || undefined,
-      include: { images: true },
+      skip: query.skip,
+      take: query.take,
+      include: {
+        images: true,
+        author: {
+          select: { id: true, name: true, avatarId: true },
+        },
+      },
+    });
+
+    const totalCount = await this.prismaService.post.count({
+      where: whereClause,
     });
 
     if (!posts.length) {
-      return Result.Ok([]);
+      return Result.Ok(
+        new PageDto({
+          data: [],
+          totalCount,
+          options: {
+            skip: query.skip!,
+            take: query.take!,
+          },
+        }),
+      );
     }
 
     const imageIds = posts.flatMap((post) =>
@@ -80,16 +115,40 @@ export class PostQueryRepository {
     const imagesData: Result<FileInfoResponse[]> =
       await this.fileServiceAdapter.getFilesInfo(imageIds);
 
+    const avatarIds = posts
+      .map((post) => post.author.avatarId)
+      .filter(Boolean) as string[];
+
+    const avatarsData: Result<FileInfoResponse[]> | null =
+      avatarIds.length > 0
+        ? await this.fileServiceAdapter.getFilesInfo(avatarIds)
+        : null;
+
     let mappedPostsView: ResponsePostDto[];
 
     if (!imagesData.isSuccess) {
-      mappedPostsView = posts.map((post) => ResponsePostDto.getView(post));
+      mappedPostsView = posts.map((post, index) =>
+        ResponsePostDto.getView(post, avatarsData?.value?.[index]),
+      );
     }
 
-    mappedPostsView = posts.map((post) =>
-      ResponsePostDto.getView(post, imagesData.value!),
+    mappedPostsView = posts.map((post, index) =>
+      ResponsePostDto.getView(
+        post,
+        avatarsData?.value?.[index],
+        imagesData.value!,
+      ),
     );
 
-    return Result.Ok(mappedPostsView);
+    return Result.Ok(
+      new PageDto({
+        data: mappedPostsView,
+        totalCount,
+        options: {
+          skip: query.skip!,
+          take: query.take!,
+        },
+      }),
+    );
   }
 }

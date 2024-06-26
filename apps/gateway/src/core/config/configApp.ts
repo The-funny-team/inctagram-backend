@@ -16,7 +16,9 @@ export function configApp(app: INestApplication) {
     methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
     allowedHeaders: ['Accept', 'Content-Type', 'Authorization'],
   });
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  useContainer(app.select(AppModule), {
+    fallbackOnErrors: true,
+  });
 
   pipesSetup(app);
   filterSetup(app);

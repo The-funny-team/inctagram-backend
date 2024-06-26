@@ -92,6 +92,11 @@ spec:
                  secretKeyRef:
                    name: gateway-production-config-secret
                    key: RMQ_URLS
+             - name: SHADOW_DATABASE_URL
+               valueFrom:
+                 secretKeyRef:
+                   name: gateway-production-config-secret
+                   key: SHADOW_DATABASE_URL
              - name: DATABASE_URL
                valueFrom:
                  secretKeyRef:
